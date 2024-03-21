@@ -4,9 +4,10 @@ import {
 	Migrations,
 	RecordId,
 	UnknownRecord,
+	createMigrationIds,
 	createMigrations,
+	createRecordMigrations,
 	createRecordType,
-	defineMigrations,
 } from '@tldraw/store'
 import { mapObjectMapValues } from '@tldraw/utils'
 import { T } from '@tldraw/validate'
@@ -92,71 +93,55 @@ export type TLShapeProp = keyof TLShapeProps
 export type TLParentId = TLPageId | TLShapeId
 
 /** @internal */
-export const rootShapeVersions = {
+export const rootShapeVersions = createMigrationIds('com.tldraw.shape', {
 	AddIsLocked: 1,
 	HoistOpacity: 2,
 	AddMeta: 3,
-} as const
+} as const)
 
 /** @internal */
-export const rootShapeMigrations = defineMigrations({
-	currentVersion: rootShapeVersions.AddMeta,
-	migrators: {
-		[rootShapeVersions.AddIsLocked]: {
-			up: (record) => {
-				return {
-					...record,
-					isLocked: false,
-				}
+export const rootShapeMigrations = createRecordMigrations({
+	recordType: 'shape',
+	sequence: [
+		{
+			id: rootShapeVersions.AddIsLocked,
+			up: (record: any) => {
+				record.isLocked = false
 			},
-			down: (record) => {
-				const { isLocked: _, ...rest } = record
-				return {
-					...rest,
-				}
+			down: (record: any) => {
+				delete record.isLocked
 			},
 		},
-		[rootShapeVersions.HoistOpacity]: {
-			up: ({ props: { opacity, ...props }, ...record }) => {
-				return {
-					...record,
-					opacity: Number(opacity ?? '1'),
-					props,
-				}
+		{
+			id: rootShapeVersions.HoistOpacity,
+			up: (record: any) => {
+				record.opacity = Number(record.props.opacity ?? '1')
 			},
-			down: ({ opacity, ...record }) => {
-				return {
-					...record,
-					props: {
-						...record.props,
-						opacity:
-							opacity < 0.175
-								? '0.1'
-								: opacity < 0.375
-									? '0.25'
-									: opacity < 0.625
-										? '0.5'
-										: opacity < 0.875
-											? '0.75'
-											: '1',
-					},
-				}
+			down: (record: any) => {
+				const opacity = record.opacity
+				delete record.opacity
+				record.props.opacity =
+					opacity < 0.175
+						? '0.1'
+						: opacity < 0.375
+							? '0.25'
+							: opacity < 0.625
+								? '0.5'
+								: opacity < 0.875
+									? '0.75'
+									: '1'
 			},
 		},
-		[rootShapeVersions.AddMeta]: {
-			up: (record) => {
-				return {
-					...record,
-					meta: {},
-				}
+		{
+			id: rootShapeVersions.AddMeta,
+			up: (record: any) => {
+				record.meta = {}
 			},
-			down: ({ meta: _, ...record }) => {
-				return {
-					...record,
-				}
+			down: (record: any) => {
+				delete record.meta
 			},
 		},
-	},
+	],
 })
 
 /** @public */
@@ -209,15 +194,15 @@ export function processShapeMigrations(shapes: Record<string, SchemaShapeInfo>) 
 	const result: Record<string, Migrations> = {}
 
 	for (const [shapeType, { migrations }] of Object.entries(shapes)) {
+		const sequenceId = `com.tldraw.shape.${shapeType}`
 		if (!migrations) {
 			// provide empty migrations sequence to allow for future migrations
-			result[shapeType] = createMigrations({
-				sequenceId: `com.tldraw.shape.${shapeType}`,
+			result[sequenceId] = createMigrations({
+				sequenceId,
 				sequence: [],
 			})
 		} else if ('sequence' in migrations) {
-			const sequenceId = `com.tldraw.shape.${shapeType}`
-			result[shapeType] = createMigrations({
+			result[sequenceId] = createMigrations({
 				sequenceId,
 				sequence: migrations.sequence.map(
 					({ version, up, down }): Migration => ({
@@ -243,6 +228,31 @@ export function processShapeMigrations(shapes: Record<string, SchemaShapeInfo>) 
 			})
 		} else {
 			// legacy migrations, will be removed in the future
+			result[sequenceId] = createMigrations({
+				sequenceId,
+				sequence: Object.keys(migrations.migrators)
+					.map((k) => Number(k))
+					.sort((a: number, b: number) => a - b)
+					.map(
+						(version): Migration => ({
+							id: `${sequenceId}/${version}`,
+							scope: 'record',
+							filter: (r) => r.typeName === 'shape' && (r as TLShape).type === shapeType,
+							up: (record: any) => {
+								const result = migrations.migrators[version].up(record.props)
+								if (result) {
+									record.props = result
+								}
+							},
+							down: (record: any) => {
+								const result = migrations.migrators[version].down(record.props)
+								if (result) {
+									record.props = result
+								}
+							},
+						})
+					),
+			})
 		}
 	}
 
