@@ -116,6 +116,7 @@ export const rootShapeMigrations = createRecordMigrations({
 			id: rootShapeVersions.HoistOpacity,
 			up: (record: any) => {
 				record.opacity = Number(record.props.opacity ?? '1')
+				delete record.props.opacity
 			},
 			down: (record: any) => {
 				const opacity = record.opacity
@@ -136,9 +137,6 @@ export const rootShapeMigrations = createRecordMigrations({
 			id: rootShapeVersions.AddMeta,
 			up: (record: any) => {
 				record.meta = {}
-			},
-			down: (record: any) => {
-				delete record.meta
 			},
 		},
 	],
