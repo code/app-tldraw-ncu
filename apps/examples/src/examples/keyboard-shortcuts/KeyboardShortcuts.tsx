@@ -1,4 +1,10 @@
-import { TLUiActionsContextType, TLUiOverrides, TLUiToolsContextType, Tldraw } from 'tldraw'
+import {
+	TLStoreSnapshot,
+	TLUiActionsContextType,
+	TLUiOverrides,
+	TLUiToolsContextType,
+	Tldraw,
+} from 'tldraw'
 import 'tldraw/tldraw.css'
 import jsonSnapshot from './snapshot.json'
 
@@ -22,7 +28,11 @@ const overrides: TLUiOverrides = {
 export default function KeyboardShortcuts() {
 	return (
 		<div className="tldraw__editor">
-			<Tldraw persistenceKey="tldraw_kbd_shortcuts" overrides={overrides} snapshot={jsonSnapshot} />
+			<Tldraw
+				persistenceKey="tldraw_kbd_shortcuts"
+				overrides={overrides}
+				snapshot={jsonSnapshot as TLStoreSnapshot}
+			/>
 		</div>
 	)
 }
