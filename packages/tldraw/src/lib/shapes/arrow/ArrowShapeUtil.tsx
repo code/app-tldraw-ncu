@@ -9,8 +9,8 @@ import {
 	SVGContainer,
 	ShapeUtil,
 	SvgExportContext,
+	TLArrowBinding,
 	TLArrowShape,
-	TLArrowShapeProps,
 	TLHandle,
 	TLOnEditEndHandler,
 	TLOnHandleDragHandler,
@@ -23,9 +23,11 @@ import {
 	Vec,
 	arrowShapeMigrations,
 	arrowShapeProps,
+	ensureArrowBinding,
+	ensureNoArrowBinding,
+	getArrowBindings,
 	getArrowTerminalsInArrowSpace,
 	mapObjectMapValues,
-	objectMapEntries,
 	structuredClone,
 	toDomPrecision,
 	track,
@@ -82,8 +84,8 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			color: 'black',
 			labelColor: 'black',
 			bend: 0,
-			start: { type: 'point', x: 0, y: 0 },
-			end: { type: 'point', x: 2, y: 0 },
+			start: { x: 0, y: 0 },
+			end: { x: 2, y: 0 },
 			arrowheadStart: 'none',
 			arrowheadEnd: 'arrow',
 			text: '',
@@ -185,11 +187,18 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 
 		const next = structuredClone(shape) as TLArrowShape
 
+		const bindings = this.editor.getBindingsFromShape<TLArrowBinding>(shape, 'arrow')
+		const currentBinding = bindings.find((b) => b.props.terminal === handleId)
+
+		const otherHandleId = handleId === ARROW_HANDLES.START ? ARROW_HANDLES.END : ARROW_HANDLES.START
+		const otherBinding = bindings.find((b) => b.props.terminal === otherHandleId)
+
 		if (this.editor.inputs.ctrlKey) {
 			// todo: maybe double check that this isn't equal to the other handle too?
 			// Skip binding
+			ensureNoArrowBinding(this.editor, shape, handleId)
+
 			next.props[handleId] = {
-				type: 'point',
 				x: handle.x,
 				y: handle.y,
 			}
@@ -209,8 +218,9 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 
 		if (!target) {
 			// todo: maybe double check that this isn't equal to the other handle too?
+			ensureNoArrowBinding(this.editor, shape, handleId)
+
 			next.props[handleId] = {
-				type: 'point',
 				x: handle.x,
 				y: handle.y,
 			}
@@ -229,11 +239,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 
 		if (!precise) {
 			// If we're switching to a new bound shape, then precise only if moving slowly
-			const prevHandle = next.props[handleId]
-			if (
-				prevHandle.type === 'point' ||
-				(prevHandle.type === 'binding' && target.id !== prevHandle.boundShapeId)
-			) {
+			if (!currentBinding || (currentBinding && target.id !== currentBinding.toId)) {
 				precise = this.editor.inputs.pointerVelocity.len() < 0.5
 			}
 		}
@@ -245,13 +251,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 
 			// Double check that we're not going to be doing an imprecise snap on
 			// the same shape twice, as this would result in a zero length line
-			const otherHandle =
-				next.props[handleId === ARROW_HANDLES.START ? ARROW_HANDLES.END : ARROW_HANDLES.START]
-			if (
-				otherHandle.type === 'binding' &&
-				target.id === otherHandle.boundShapeId &&
-				otherHandle.isPrecise
-			) {
+			if (otherBinding && target.id === otherBinding.toId && otherBinding.props.isPrecise) {
 				precise = true
 			}
 		}
@@ -275,29 +275,29 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			}
 		}
 
-		next.props[handleId] = {
-			type: 'binding',
-			boundShapeId: target.id,
-			normalizedAnchor: normalizedAnchor,
+		ensureArrowBinding(this.editor, shape, target.id, {
+			terminal: handleId,
+			normalizedAnchor,
 			isPrecise: precise,
 			isExact: this.editor.inputs.altKey,
-		}
+		})
 
-		if (next.props.start.type === 'binding' && next.props.end.type === 'binding') {
-			if (next.props.start.boundShapeId === next.props.end.boundShapeId) {
-				if (Vec.Equals(next.props.start.normalizedAnchor, next.props.end.normalizedAnchor)) {
-					next.props.end.normalizedAnchor.x += 0.05
-				}
-			}
-		}
+		this.editor.setHintingShapes([target.id])
+
+		// TODO(alex): restore this if we can
+		// if (next.props.start.type === 'binding' && next.props.end.type === 'binding') {
+		// 	if (next.props.start.boundShapeId === next.props.end.boundShapeId) {
+		// 		if (Vec.Equals(next.props.start.normalizedAnchor, next.props.end.normalizedAnchor)) {
+		// 			next.props.end.normalizedAnchor.x += 0.05
+		// 		}
+		// 	}
+		// }
 
 		return next
 	}
 
 	override onTranslateStart: TLOnTranslateStartHandler<TLArrowShape> = (shape) => {
-		const startBindingId =
-			shape.props.start.type === 'binding' ? shape.props.start.boundShapeId : null
-		const endBindingId = shape.props.end.type === 'binding' ? shape.props.end.boundShapeId : null
+		const bindings = getArrowBindings(this.editor, shape)
 
 		const terminalsInArrowSpace = getArrowTerminalsInArrowSpace(this.editor, shape)
 		const shapePageTransform = this.editor.getShapePageTransform(shape.id)!
@@ -308,26 +308,25 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		const selectedShapeIds = this.editor.getSelectedShapeIds()
 
 		if (
-			(startBindingId &&
-				(selectedShapeIds.includes(startBindingId) ||
-					this.editor.isAncestorSelected(startBindingId))) ||
-			(endBindingId &&
-				(selectedShapeIds.includes(endBindingId) || this.editor.isAncestorSelected(endBindingId)))
+			(bindings.start &&
+				(selectedShapeIds.includes(bindings.start.toId) ||
+					this.editor.isAncestorSelected(bindings.start.toId))) ||
+			(bindings.end &&
+				(selectedShapeIds.includes(bindings.end.toId) ||
+					this.editor.isAncestorSelected(bindings.end.toId)))
 		) {
 			return
 		}
-
-		let result = shape
 
 		// When we start translating shapes, record where their bindings were in page space so we
 		// can maintain them as we translate the arrow
 		shapeAtTranslationStart.set(shape, {
 			pagePosition: shapePageTransform.applyToPoint(shape),
 			terminalBindings: mapObjectMapValues(terminalsInArrowSpace, (terminalName, point) => {
-				const terminal = shape.props[terminalName]
-				if (terminal.type !== 'binding') return null
+				const binding = bindings[terminalName]
+				if (!binding) return null
 				return {
-					binding: terminal,
+					binding,
 					shapePosition: point,
 					pagePosition: shapePageTransform.applyToPoint(point),
 				}
@@ -335,15 +334,16 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		})
 
 		for (const handleName of [ARROW_HANDLES.START, ARROW_HANDLES.END] as const) {
-			const terminal = shape.props[handleName]
-			if (terminal.type !== 'binding') continue
-			result = {
-				...shape,
-				props: { ...shape.props, [handleName]: { ...terminal, isPrecise: true } },
-			}
+			const binding = bindings[handleName]
+			if (!binding) continue
+
+			this.editor.updateBinding({
+				...binding,
+				props: { ...binding.props, isPrecise: true },
+			})
 		}
 
-		return result
+		return
 	}
 
 	override onTranslate?: TLOnTranslateHandler<TLArrowShape> = (initialShape, shape) => {
@@ -356,10 +356,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			atTranslationStart.pagePosition
 		)
 
-		let result = shape
-		for (const [terminalName, terminalBinding] of objectMapEntries(
-			atTranslationStart.terminalBindings
-		)) {
+		for (const terminalBinding of Object.values(atTranslationStart.terminalBindings)) {
 			if (!terminalBinding) continue
 
 			const newPagePoint = Vec.Add(terminalBinding.pagePosition, Vec.Mul(pageDelta, 0.5))
@@ -372,54 +369,41 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 				},
 			})
 
-			if (newTarget?.id === terminalBinding.binding.boundShapeId) {
+			if (newTarget?.id === terminalBinding.binding.toId) {
 				const targetBounds = Box.ZeroFix(this.editor.getShapeGeometry(newTarget).bounds)
 				const pointInTargetSpace = this.editor.getPointInShapeSpace(newTarget, newPagePoint)
 				const normalizedAnchor = {
 					x: (pointInTargetSpace.x - targetBounds.minX) / targetBounds.width,
 					y: (pointInTargetSpace.y - targetBounds.minY) / targetBounds.height,
 				}
-				result = {
-					...result,
-					props: {
-						...result.props,
-						[terminalName]: { ...terminalBinding.binding, isPrecise: true, normalizedAnchor },
-					},
-				}
+				ensureArrowBinding(this.editor, shape, newTarget.id, {
+					...terminalBinding.binding.props,
+					normalizedAnchor,
+					isPrecise: true,
+				})
 			} else {
-				result = {
-					...result,
-					props: {
-						...result.props,
-						[terminalName]: {
-							type: 'point',
-							x: terminalBinding.shapePosition.x,
-							y: terminalBinding.shapePosition.y,
-						},
-					},
-				}
+				ensureNoArrowBinding(this.editor, shape, terminalBinding.binding.props.terminal)
 			}
 		}
-
-		return result
 	}
 
 	override onResize: TLOnResizeHandler<TLArrowShape> = (shape, info) => {
 		const { scaleX, scaleY } = info
 
+		const bindings = getArrowBindings(this.editor, shape)
 		const terminals = getArrowTerminalsInArrowSpace(this.editor, shape)
 
 		const { start, end } = structuredClone<TLArrowShape['props']>(shape.props)
 		let { bend } = shape.props
 
 		// Rescale start handle if it's not bound to a shape
-		if (start.type === 'point') {
+		if (!bindings.start) {
 			start.x = terminals.start.x * scaleX
 			start.y = terminals.start.y * scaleY
 		}
 
 		// Rescale end handle if it's not bound to a shape
-		if (end.type === 'point') {
+		if (!bindings.end) {
 			end.x = terminals.end.x * scaleX
 			end.y = terminals.end.y * scaleY
 		}
@@ -430,18 +414,23 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		const mx = Math.abs(scaleX)
 		const my = Math.abs(scaleY)
 
+		const startNormalizedAnchor = bindings?.start
+			? Vec.From(bindings.start.props.normalizedAnchor)
+			: null
+		const endNormalizedAnchor = bindings?.end ? Vec.From(bindings.end.props.normalizedAnchor) : null
+
 		if (scaleX < 0 && scaleY >= 0) {
 			if (bend !== 0) {
 				bend *= -1
 				bend *= Math.max(mx, my)
 			}
 
-			if (start.type === 'binding') {
-				start.normalizedAnchor.x = 1 - start.normalizedAnchor.x
+			if (startNormalizedAnchor) {
+				startNormalizedAnchor.x = 1 - startNormalizedAnchor.x
 			}
 
-			if (end.type === 'binding') {
-				end.normalizedAnchor.x = 1 - end.normalizedAnchor.x
+			if (endNormalizedAnchor) {
+				endNormalizedAnchor.x = 1 - endNormalizedAnchor.x
 			}
 		} else if (scaleX >= 0 && scaleY < 0) {
 			if (bend !== 0) {
@@ -449,12 +438,12 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 				bend *= Math.max(mx, my)
 			}
 
-			if (start.type === 'binding') {
-				start.normalizedAnchor.y = 1 - start.normalizedAnchor.y
+			if (startNormalizedAnchor) {
+				startNormalizedAnchor.y = 1 - startNormalizedAnchor.y
 			}
 
-			if (end.type === 'binding') {
-				end.normalizedAnchor.y = 1 - end.normalizedAnchor.y
+			if (endNormalizedAnchor) {
+				endNormalizedAnchor.y = 1 - endNormalizedAnchor.y
 			}
 		} else if (scaleX >= 0 && scaleY >= 0) {
 			if (bend !== 0) {
@@ -465,15 +454,28 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 				bend *= Math.max(mx, my)
 			}
 
-			if (start.type === 'binding') {
-				start.normalizedAnchor.x = 1 - start.normalizedAnchor.x
-				start.normalizedAnchor.y = 1 - start.normalizedAnchor.y
+			if (startNormalizedAnchor) {
+				startNormalizedAnchor.x = 1 - startNormalizedAnchor.x
+				startNormalizedAnchor.y = 1 - startNormalizedAnchor.y
 			}
 
-			if (end.type === 'binding') {
-				end.normalizedAnchor.x = 1 - end.normalizedAnchor.x
-				end.normalizedAnchor.y = 1 - end.normalizedAnchor.y
+			if (endNormalizedAnchor) {
+				endNormalizedAnchor.x = 1 - endNormalizedAnchor.x
+				endNormalizedAnchor.y = 1 - endNormalizedAnchor.y
 			}
+		}
+
+		if (bindings.start && startNormalizedAnchor) {
+			ensureArrowBinding(this.editor, shape, bindings.start.toId, {
+				...bindings.start.props,
+				normalizedAnchor: startNormalizedAnchor,
+			})
+		}
+		if (bindings.end && endNormalizedAnchor) {
+			ensureArrowBinding(this.editor, shape, bindings.end.toId, {
+				...bindings.end.props,
+				normalizedAnchor: endNormalizedAnchor,
+			})
 		}
 
 		const next = {
@@ -744,6 +746,7 @@ const ArrowSvg = track(function ArrowSvg({
 	const theme = useDefaultColorTheme()
 	const info = editor.getArrowInfo(shape)
 	const bounds = Box.ZeroFix(editor.getShapeGeometry(shape).bounds)
+	const bindings = getArrowBindings(editor, shape)
 
 	const changeIndex = React.useMemo<number>(() => {
 		return editor.environment.isSafari ? (globalRenderIndex += 1) : 0
@@ -774,7 +777,7 @@ const ArrowSvg = track(function ArrowSvg({
 		)
 
 		handlePath =
-			shape.props.start.type === 'binding' || shape.props.end.type === 'binding' ? (
+			bindings.start || bindings.end ? (
 				<path
 					className="tl-arrow-hint"
 					d={info.isStraight ? getStraightArrowHandlePath(info) : getCurvedArrowHandlePath(info)}
@@ -782,19 +785,19 @@ const ArrowSvg = track(function ArrowSvg({
 					strokeDashoffset={strokeDashoffset}
 					strokeWidth={sw}
 					markerStart={
-						shape.props.start.type === 'binding'
-							? shape.props.start.isExact
+						bindings.start
+							? bindings.start.props.isExact
 								? ''
-								: shape.props.start.isPrecise
+								: bindings.start.props.isPrecise
 									? 'url(#arrowhead-cross)'
 									: 'url(#arrowhead-dot)'
 							: ''
 					}
 					markerEnd={
-						shape.props.end.type === 'binding'
-							? shape.props.end.isExact
+						bindings.end
+							? bindings.end.props.isExact
 								? ''
-								: shape.props.end.isPrecise
+								: bindings.end.props.isPrecise
 									? 'url(#arrowhead-cross)'
 									: 'url(#arrowhead-dot)'
 							: ''
@@ -894,7 +897,7 @@ const shapeAtTranslationStart = new WeakMap<
 			{
 				pagePosition: Vec
 				shapePosition: Vec
-				binding: Extract<TLArrowShapeProps['start'], { type: 'binding' }>
+				binding: TLArrowBinding
 			} | null
 		>
 	}

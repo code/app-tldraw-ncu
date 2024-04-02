@@ -1,11 +1,15 @@
 import { T } from '@tldraw/validate'
 import { vecModelValidator } from '../misc/geometry-types'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
 import { DefaultColorStyle } from '../styles/TLColorStyle'
 import { DefaultDashStyle } from '../styles/TLDashStyle'
 import { DefaultFillStyle } from '../styles/TLFillStyle'
 import { DefaultSizeStyle } from '../styles/TLSizeStyle'
-import { ShapePropsType, TLBaseShape } from './TLBaseShape'
+import { TLBaseShape } from './TLBaseShape'
 
 export const DrawShapeSegment = T.object({
 	type: T.literalEnum('free', 'straight'),
@@ -28,7 +32,7 @@ export const drawShapeProps = {
 }
 
 /** @public */
-export type TLDrawShapeProps = ShapePropsType<typeof drawShapeProps>
+export type TLDrawShapeProps = RecordPropsType<typeof drawShapeProps>
 
 /** @public */
 export type TLDrawShape = TLBaseShape<'draw', TLDrawShapeProps>
@@ -40,7 +44,7 @@ const Versions = {
 export { Versions as drawShapeVersions }
 
 /** @internal */
-export const drawShapeMigrations = createShapePropsMigrations({
+export const drawShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: Versions.AddInPen,

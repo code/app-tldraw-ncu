@@ -1,13 +1,19 @@
+import { noop } from '@tldraw/utils'
 import { T } from '@tldraw/validate'
 import { vecModelValidator } from '../misc/geometry-types'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
+import { storeVersions } from '../store-migrations'
 import { StyleProp } from '../styles/StyleProp'
 import { DefaultColorStyle, DefaultLabelColorStyle } from '../styles/TLColorStyle'
 import { DefaultDashStyle } from '../styles/TLDashStyle'
 import { DefaultFillStyle } from '../styles/TLFillStyle'
 import { DefaultFontStyle } from '../styles/TLFontStyle'
 import { DefaultSizeStyle } from '../styles/TLSizeStyle'
-import { ShapePropsType, TLBaseShape, shapeIdValidator } from './TLBaseShape'
+import { TLBaseShape } from './TLBaseShape'
 
 const arrowheadTypes = [
 	'arrow',
@@ -37,25 +43,6 @@ export const ArrowShapeArrowheadEndStyle = StyleProp.defineEnum('tldraw:arrowhea
 export type TLArrowShapeArrowheadStyle = T.TypeOf<typeof ArrowShapeArrowheadStartStyle>
 
 /** @public */
-const ArrowShapeTerminal = T.union('type', {
-	binding: T.object({
-		type: T.literal('binding'),
-		boundShapeId: shapeIdValidator,
-		normalizedAnchor: vecModelValidator,
-		isExact: T.boolean,
-		isPrecise: T.boolean,
-	}),
-	point: T.object({
-		type: T.literal('point'),
-		x: T.number,
-		y: T.number,
-	}),
-})
-
-/** @public */
-export type TLArrowShapeTerminal = T.TypeOf<typeof ArrowShapeTerminal>
-
-/** @public */
 export const arrowShapeProps = {
 	labelColor: DefaultLabelColorStyle,
 	color: DefaultColorStyle,
@@ -65,15 +52,15 @@ export const arrowShapeProps = {
 	arrowheadStart: ArrowShapeArrowheadStartStyle,
 	arrowheadEnd: ArrowShapeArrowheadEndStyle,
 	font: DefaultFontStyle,
-	start: ArrowShapeTerminal,
-	end: ArrowShapeTerminal,
+	start: vecModelValidator,
+	end: vecModelValidator,
 	bend: T.number,
 	text: T.string,
 	labelPosition: T.number,
 }
 
 /** @public */
-export type TLArrowShapeProps = ShapePropsType<typeof arrowShapeProps>
+export type TLArrowShapeProps = RecordPropsType<typeof arrowShapeProps>
 
 /** @public */
 export type TLArrowShape = TLBaseShape<'arrow', TLArrowShapeProps>
@@ -82,10 +69,11 @@ export const arrowShapeVersions = {
 	AddLabelColor: 1,
 	AddIsPrecise: 2,
 	AddLabelPosition: 3,
+	ExtractBinding: 4,
 } as const
 
 /** @internal */
-export const arrowShapeMigrations = createShapePropsMigrations({
+export const arrowShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: arrowShapeVersions.AddLabelColor,
@@ -129,6 +117,13 @@ export const arrowShapeMigrations = createShapePropsMigrations({
 			down: (props) => {
 				delete props.labelPosition
 			},
+		},
+
+		{
+			version: arrowShapeVersions.ExtractBinding,
+			dependsOn: [storeVersions.ExtractArrowBindings],
+			up: noop,
+			down: noop,
 		},
 	],
 })

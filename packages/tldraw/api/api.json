@@ -1211,8 +1211,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -1604,30 +1604,12 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "UnionValidator",
-                  "canonicalReference": "@tldraw/validate!UnionValidator:class"
+                  "text": "Validator",
+                  "canonicalReference": "@tldraw/validate!Validator:class"
                 },
                 {
                   "kind": "Content",
-                  "text": "<\"type\", {\n            binding: import(\"@tldraw/editor\")."
-                },
-                {
-                  "kind": "Reference",
-                  "text": "ObjectValidator",
-                  "canonicalReference": "@tldraw/validate!ObjectValidator:class"
-                },
-                {
-                  "kind": "Content",
-                  "text": "<{\n                type: \"binding\";\n                boundShapeId: import(\"@tldraw/editor\")."
-                },
-                {
-                  "kind": "Reference",
-                  "text": "TLShapeId",
-                  "canonicalReference": "@tldraw/tlschema!TLShapeId:type"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";\n                normalizedAnchor: import(\"@tldraw/editor\")."
+                  "text": "<import(\"@tldraw/editor\")."
                 },
                 {
                   "kind": "Reference",
@@ -1636,43 +1618,16 @@
                 },
                 {
                   "kind": "Content",
-                  "text": ";\n                isExact: boolean;\n                isPrecise: boolean;\n            }>;\n            point: import(\"@tldraw/editor\")."
+                  "text": ">;\n        end: import(\"@tldraw/editor\")."
                 },
                 {
                   "kind": "Reference",
-                  "text": "ObjectValidator",
-                  "canonicalReference": "@tldraw/validate!ObjectValidator:class"
+                  "text": "Validator",
+                  "canonicalReference": "@tldraw/validate!Validator:class"
                 },
                 {
                   "kind": "Content",
-                  "text": "<{\n                x: number;\n                y: number;\n                type: \"point\";\n            }>;\n        }, never>;\n        end: import(\"@tldraw/editor\")."
-                },
-                {
-                  "kind": "Reference",
-                  "text": "UnionValidator",
-                  "canonicalReference": "@tldraw/validate!UnionValidator:class"
-                },
-                {
-                  "kind": "Content",
-                  "text": "<\"type\", {\n            binding: import(\"@tldraw/editor\")."
-                },
-                {
-                  "kind": "Reference",
-                  "text": "ObjectValidator",
-                  "canonicalReference": "@tldraw/validate!ObjectValidator:class"
-                },
-                {
-                  "kind": "Content",
-                  "text": "<{\n                type: \"binding\";\n                boundShapeId: import(\"@tldraw/editor\")."
-                },
-                {
-                  "kind": "Reference",
-                  "text": "TLShapeId",
-                  "canonicalReference": "@tldraw/tlschema!TLShapeId:type"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";\n                normalizedAnchor: import(\"@tldraw/editor\")."
+                  "text": "<import(\"@tldraw/editor\")."
                 },
                 {
                   "kind": "Reference",
@@ -1681,16 +1636,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": ";\n                isExact: boolean;\n                isPrecise: boolean;\n            }>;\n            point: import(\"@tldraw/editor\")."
-                },
-                {
-                  "kind": "Reference",
-                  "text": "ObjectValidator",
-                  "canonicalReference": "@tldraw/validate!ObjectValidator:class"
-                },
-                {
-                  "kind": "Content",
-                  "text": "<{\n                x: number;\n                y: number;\n                type: \"point\";\n            }>;\n        }, never>;\n        bend: import(\"@tldraw/editor\")."
+                  "text": ">;\n        bend: import(\"@tldraw/editor\")."
                 },
                 {
                   "kind": "Reference",
@@ -1730,7 +1676,7 @@
               "name": "props",
               "propertyTypeTokenRange": {
                 "startIndex": 1,
-                "endIndex": 44
+                "endIndex": 32
               },
               "isStatic": true,
               "isProtected": false,
@@ -2200,8 +2146,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -5098,8 +5044,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -5996,8 +5942,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -7514,8 +7460,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -8471,8 +8417,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -10318,8 +10264,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -10905,8 +10851,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -12230,8 +12176,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -13172,8 +13118,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -15701,8 +15647,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -16734,6 +16680,15 @@
             },
             {
               "kind": "Content",
+              "text": "[] | undefined;\n    bindingUtils?: readonly "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLAnyBindingUtilConstructor",
+              "canonicalReference": "@tldraw/editor!TLAnyBindingUtilConstructor:type"
+            },
+            {
+              "kind": "Content",
               "text": "[] | undefined;\n    bounds?: import(\"@tldraw/editor\")."
             },
             {
@@ -16752,7 +16707,7 @@
           "name": "TldrawImage",
           "variableTypeTokenRange": {
             "startIndex": 1,
-            "endIndex": 14
+            "endIndex": 16
           }
         },
         {
@@ -16807,6 +16762,15 @@
             },
             {
               "kind": "Content",
+              "text": "[];\n    bindingUtils?: readonly "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLAnyBindingUtilConstructor",
+              "canonicalReference": "@tldraw/editor!TLAnyBindingUtilConstructor:type"
+            },
+            {
+              "kind": "Content",
               "text": "[];\n} & "
             },
             {
@@ -16837,7 +16801,7 @@
           "name": "TldrawImageProps",
           "typeTokenRange": {
             "startIndex": 1,
-            "endIndex": 15
+            "endIndex": 17
           }
         },
         {
@@ -28753,8 +28717,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",

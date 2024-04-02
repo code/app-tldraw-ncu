@@ -1367,6 +1367,435 @@
           "implementsTokenRanges": []
         },
         {
+          "kind": "Class",
+          "canonicalReference": "@tldraw/editor!BindingUtil:class",
+          "docComment": "/**\n * @public\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export declare abstract class BindingUtil<Binding extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLUnknownBinding",
+              "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLUnknownBinding",
+              "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+            },
+            {
+              "kind": "Content",
+              "text": "> "
+            }
+          ],
+          "fileUrlPath": "packages/editor/src/lib/editor/bindings/BindingUtil.ts",
+          "releaseTag": "Public",
+          "typeParameters": [
+            {
+              "typeParameterName": "Binding",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 4
+              }
+            }
+          ],
+          "isAbstract": true,
+          "name": "BindingUtil",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "Constructor",
+              "canonicalReference": "@tldraw/editor!BindingUtil:constructor(1)",
+              "docComment": "/**\n * Constructs a new instance of the `BindingUtil` class\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "constructor(editor: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Editor",
+                  "canonicalReference": "@tldraw/editor!Editor:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": ");"
+                }
+              ],
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "editor",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ]
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!BindingUtil#editor:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "editor: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Editor",
+                  "canonicalReference": "@tldraw/editor!Editor:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "editor",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!BindingUtil#getDefaultProps:member(1)",
+              "docComment": "/**\n * Get the default props for a binding.\n *\n * @public\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "abstract getDefaultProps(): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding['props']"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [],
+              "isOptional": false,
+              "isAbstract": true,
+              "name": "getDefaultProps"
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!BindingUtil.migrations:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "static migrations?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "migrations",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": true,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!BindingUtil#onAfterShapeChange:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "onAfterShapeChange?(binding: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", direction: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "'from' | 'to'"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", prev: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShape",
+                  "canonicalReference": "@tldraw/tlschema!TLShape:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", next: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShape",
+                  "canonicalReference": "@tldraw/tlschema!TLShape:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "void"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 9,
+                "endIndex": 10
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "binding",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "direction",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "prev",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "next",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 7,
+                    "endIndex": 8
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": true,
+              "isAbstract": false,
+              "name": "onAfterShapeChange"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!BindingUtil#onBeforeShapeDelete:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "onBeforeShapeDelete?(binding: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", direction: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "'from' | 'to'"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", shape: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShape",
+                  "canonicalReference": "@tldraw/tlschema!TLShape:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "void"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 8
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "binding",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "direction",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "shape",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": true,
+              "isAbstract": false,
+              "name": "onBeforeShapeDelete"
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!BindingUtil.props:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "static props?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "RecordProps",
+                  "canonicalReference": "@tldraw/tlschema!RecordProps:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "props",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "isStatic": true,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!BindingUtil.type:member",
+              "docComment": "/**\n * The type of the binding util, which should match the binding's type.\n *\n * @public\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "static type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "type",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": true,
+              "isProtected": false,
+              "isAbstract": false
+            }
+          ],
+          "implementsTokenRanges": []
+        },
+        {
           "kind": "Interface",
           "canonicalReference": "@tldraw/editor!BoundsSnapGeometry:interface",
           "docComment": "/**\n * When moving or resizing shapes, the bounds of the shape can snap to key geometry on other nearby shapes. Customize how a shape snaps to others with {@link ShapeUtil.getBoundsSnapGeometry}.\n *\n * @public\n */\n",
@@ -7447,7 +7876,7 @@
               "excerptTokens": [
                 {
                   "kind": "Content",
-                  "text": "constructor({ store, user, shapeUtils, tools, getContainer, initialState, inferDarkMode, }: "
+                  "text": "constructor({ store, user, shapeUtils, bindingUtils, tools, getContainer, initialState, inferDarkMode, }: "
                 },
                 {
                   "kind": "Reference",
@@ -7464,7 +7893,7 @@
               "overloadIndex": 1,
               "parameters": [
                 {
-                  "parameterName": "{ store, user, shapeUtils, tools, getContainer, initialState, inferDarkMode, }",
+                  "parameterName": "{ store, user, shapeUtils, bindingUtils, tools, getContainer, initialState, inferDarkMode, }",
                   "parameterTypeTokenRange": {
                     "startIndex": 1,
                     "endIndex": 2
@@ -7993,6 +8422,54 @@
               "name": "batch"
             },
             {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!Editor#bindingUtils:member",
+              "docComment": "/**\n * A map of shape utility classes (TLShapeUtils) by shape type.\n *\n * @public\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "bindingUtils: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "{\n        readonly [K in string]?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "BindingUtil",
+                  "canonicalReference": "@tldraw/editor!BindingUtil:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">;\n    }"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "bindingUtils",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 6
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
               "kind": "Method",
               "canonicalReference": "@tldraw/editor!Editor#bringForward:member(1)",
               "docComment": "/**\n * Bring shapes forward in the page's object list.\n *\n * @param shapes - The shapes (or shape ids) to move.\n *\n * @example\n * ```ts\n * editor.bringForward(['id1', 'id2'])\n * editor.bringForward(box1,  box2)\n * ```\n *\n * @public\n */\n",
@@ -8361,6 +8838,116 @@
             },
             {
               "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#createBinding:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "createBinding(partial: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "RequiredKeys",
+                  "canonicalReference": "@tldraw/editor!RequiredKeys:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingPartial",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingPartial:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", 'fromId' | 'toId' | 'type'>"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "this"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "partial",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 5
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "createBinding"
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!Editor#createBindings:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "createBindings: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "(partials: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "RequiredKeys",
+                  "canonicalReference": "@tldraw/editor!RequiredKeys:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingPartial",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingPartial:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", \"fromId\" | \"toId\" | \"type\">[]) => this"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "createBindings",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 6
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Method",
               "canonicalReference": "@tldraw/editor!Editor#createPage:member(1)",
               "docComment": "/**\n * Create a page.\n *\n * @param page - The page (or page partial) to create.\n *\n * @example\n * ```ts\n * editor.createPage(myPage)\n * editor.createPage({ name: 'Page 2' })\n * ```\n *\n * @public\n */\n",
               "excerptTokens": [
@@ -8650,6 +9237,112 @@
               "isOptional": false,
               "isAbstract": false,
               "name": "deleteAssets"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#deleteBinding:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "deleteBinding(binding: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingId",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingId:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "this"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 6
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "binding",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "deleteBinding"
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!Editor#deleteBindings:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "deleteBindings: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "(bindings: ("
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingId",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingId:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ")[]) => this"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "deleteBindings",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 6
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
             },
             {
               "kind": "Method",
@@ -9651,6 +10344,69 @@
             },
             {
               "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getAllBindingsForShape:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getAllBindingsForShape(shape: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShape",
+                  "canonicalReference": "@tldraw/tlschema!TLShape:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShapeId",
+                  "canonicalReference": "@tldraw/tlschema!TLShapeId:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "shape",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getAllBindingsForShape"
+            },
+            {
+              "kind": "Method",
               "canonicalReference": "@tldraw/editor!Editor#getAncestorPageId:member(1)",
               "docComment": "/**\n * Get the id of the containing page for a given shape.\n *\n * @param shape - The shape to get the page id for.\n *\n * @returns The id of the page that contains the shape, or undefined if the shape is undefined.\n *\n * @public\n */\n",
               "excerptTokens": [
@@ -9794,17 +10550,13 @@
                   "text": "): "
                 },
                 {
-                  "kind": "Content",
-                  "text": "{\n        arrowId: "
-                },
-                {
                   "kind": "Reference",
-                  "text": "TLShapeId",
-                  "canonicalReference": "@tldraw/tlschema!TLShapeId:type"
+                  "text": "TLArrowShape",
+                  "canonicalReference": "@tldraw/tlschema!TLArrowShape:type"
                 },
                 {
                   "kind": "Content",
-                  "text": ";\n        handleId: \"end\" | \"start\";\n    }[]"
+                  "text": "[]"
                 },
                 {
                   "kind": "Content",
@@ -9814,7 +10566,7 @@
               "isStatic": false,
               "returnTypeTokenRange": {
                 "startIndex": 3,
-                "endIndex": 6
+                "endIndex": 5
               },
               "releaseTag": "Public",
               "isProtected": false,
@@ -10016,6 +10768,508 @@
               "isOptional": false,
               "isAbstract": false,
               "name": "getAssets"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getBinding:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBinding(id: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingId",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingId:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | undefined"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "id",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBinding"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getBindingsFromShape:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBindingsFromShape<Binding extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " = "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(shape: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShape",
+                  "canonicalReference": "@tldraw/tlschema!TLShape:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShapeId",
+                  "canonicalReference": "@tldraw/tlschema!TLShapeId:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding['type']"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "Binding",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  }
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 11,
+                "endIndex": 12
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "shape",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 8
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "type",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 9,
+                    "endIndex": 10
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBindingsFromShape"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getBindingsToShape:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBindingsToShape<Binding extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " = "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(shape: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShape",
+                  "canonicalReference": "@tldraw/tlschema!TLShape:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLShapeId",
+                  "canonicalReference": "@tldraw/tlschema!TLShapeId:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding['type']"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "Binding[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "Binding",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  }
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 11,
+                "endIndex": 12
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "shape",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 8
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "type",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 9,
+                    "endIndex": 10
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBindingsToShape"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getBindingUtil:member(1)",
+              "docComment": "/**\n * Get a binding util from a binding itself.\n *\n * @param binding - A binding, binding partial, or binding type.\n *\n * @example\n * ```ts\n * const util = editor.getBindingUtil(myArrowBinding)\n * const util = editor.getBindingUtil('arrow')\n * const util = editor.getBindingUtil<TLArrowBinding>(myArrowBinding)\n * const util = editor.getBindingUtil(TLArrowBinding)('arrow')\n * ```\n *\n * @public\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBindingUtil<S extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(binding: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "S | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingPartial",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingPartial:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<S>"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "BindingUtil",
+                  "canonicalReference": "@tldraw/editor!BindingUtil:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<S>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "S",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 9
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "binding",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBindingUtil"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getBindingUtil:member(2)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBindingUtil<S extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "S['type']"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "BindingUtil",
+                  "canonicalReference": "@tldraw/editor!BindingUtil:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<S>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "S",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 2,
+              "parameters": [
+                {
+                  "parameterName": "type",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBindingUtil"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#getBindingUtil:member(3)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBindingUtil<T extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "BindingUtil",
+                  "canonicalReference": "@tldraw/editor!BindingUtil:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">(type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T extends "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "BindingUtil",
+                  "canonicalReference": "@tldraw/editor!BindingUtil:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<infer R> ? R['type'] : string"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "typeParameters": [
+                {
+                  "typeParameterName": "T",
+                  "constraintTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "defaultTypeTokenRange": {
+                    "startIndex": 0,
+                    "endIndex": 0
+                  }
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 8
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 3,
+              "parameters": [
+                {
+                  "parameterName": "type",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 6
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBindingUtil"
             },
             {
               "kind": "Method",
@@ -18849,6 +20103,94 @@
             },
             {
               "kind": "Method",
+              "canonicalReference": "@tldraw/editor!Editor#updateBinding:member(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "updateBinding(partial: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingPartial",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingPartial:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "this"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 4
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "partial",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "updateBinding"
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "@tldraw/editor!Editor#updateBindings:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "updateBindings: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "(partials: (null | "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingPartial",
+                  "canonicalReference": "@tldraw/tlschema!TLBindingPartial:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | undefined)[]) => this"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "updateBindings",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 4
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Method",
               "canonicalReference": "@tldraw/editor!Editor#updateCurrentPageState:member(1)",
               "docComment": "/**\n * Update this instance's page state.\n *\n * @param partial - The partial of the page state object containing the changes.\n *\n * @param historyOptions - The history options for the change.\n *\n * @example\n * ```ts\n * editor.updateCurrentPageState({ id: 'page1', editingShapeId: 'shape:123' })\n * editor.updateCurrentPageState({ id: 'page1', editingShapeId: 'shape:123' }, { ephemeral: true })\n * ```\n *\n * @public\n */\n",
               "excerptTokens": [
@@ -23356,8 +24698,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -23435,8 +24777,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "ShapeProps",
-                  "canonicalReference": "@tldraw/tlschema!ShapeProps:type"
+                  "text": "RecordProps",
+                  "canonicalReference": "@tldraw/tlschema!RecordProps:type"
                 },
                 {
                   "kind": "Content",
@@ -31384,8 +32726,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -32150,8 +33492,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "ShapeProps",
-                  "canonicalReference": "@tldraw/tlschema!ShapeProps:type"
+                  "text": "RecordProps",
+                  "canonicalReference": "@tldraw/tlschema!RecordProps:type"
                 },
                 {
                   "kind": "Content",
@@ -35960,6 +37302,37 @@
         },
         {
           "kind": "TypeAlias",
+          "canonicalReference": "@tldraw/editor!TLAnyBindingUtilConstructor:type",
+          "docComment": "/**\n * @public\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type TLAnyBindingUtilConstructor = "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLBindingUtilConstructor",
+              "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<any>"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "packages/editor/src/lib/config/defaultBindings.ts",
+          "releaseTag": "Public",
+          "name": "TLAnyBindingUtilConstructor",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 3
+          }
+        },
+        {
+          "kind": "TypeAlias",
           "canonicalReference": "@tldraw/editor!TLAnyShapeUtilConstructor:type",
           "docComment": "/**\n * @public\n */\n",
           "excerptTokens": [
@@ -36648,6 +38021,214 @@
             "startIndex": 3,
             "endIndex": 4
           }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor:interface",
+          "docComment": "/**\n * @public\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export interface TLBindingUtilConstructor<T extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLUnknownBinding",
+              "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+            },
+            {
+              "kind": "Content",
+              "text": ", U extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "BindingUtil",
+              "canonicalReference": "@tldraw/editor!BindingUtil:class"
+            },
+            {
+              "kind": "Content",
+              "text": "<T>"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "BindingUtil",
+              "canonicalReference": "@tldraw/editor!BindingUtil:class"
+            },
+            {
+              "kind": "Content",
+              "text": "<T>"
+            },
+            {
+              "kind": "Content",
+              "text": "> "
+            }
+          ],
+          "fileUrlPath": "packages/editor/src/lib/editor/bindings/BindingUtil.ts",
+          "releaseTag": "Public",
+          "typeParameters": [
+            {
+              "typeParameterName": "T",
+              "constraintTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 0,
+                "endIndex": 0
+              }
+            },
+            {
+              "typeParameterName": "U",
+              "constraintTokenRange": {
+                "startIndex": 3,
+                "endIndex": 5
+              },
+              "defaultTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 8
+              }
+            }
+          ],
+          "name": "TLBindingUtilConstructor",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "ConstructSignature",
+              "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor:new(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "new (editor: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Editor",
+                  "canonicalReference": "@tldraw/editor!Editor:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "U"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 4
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "editor",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ]
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor#migrations:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "migrations?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "migrations",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor#props:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "props?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "RecordProps",
+                  "canonicalReference": "@tldraw/tlschema!RecordProps:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<T>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "props",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor#type:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "T['type']"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "type",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
         },
         {
           "kind": "TypeAlias",
@@ -37367,6 +38948,42 @@
             },
             {
               "kind": "PropertySignature",
+              "canonicalReference": "@tldraw/editor!TldrawEditorBaseProps#bindingUtils:member",
+              "docComment": "/**\n * An array of binding utils to use in the editor.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "bindingUtils?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "readonly "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLAnyBindingUtilConstructor",
+                  "canonicalReference": "@tldraw/editor!TLAnyBindingUtilConstructor:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "bindingUtils",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 4
+              }
+            },
+            {
+              "kind": "PropertySignature",
               "canonicalReference": "@tldraw/editor!TldrawEditorBaseProps#children:member",
               "docComment": "/**\n * The component's children.\n */\n",
               "excerptTokens": [
@@ -37800,6 +39417,51 @@
           "name": "TLEditorOptions",
           "preserveMemberOrder": false,
           "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@tldraw/editor!TLEditorOptions#bindingUtils:member",
+              "docComment": "/**\n * An array of bindings to use in the editor. These will be used to create and manage bindings in the editor.\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "bindingUtils: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "readonly "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLBindingUtilConstructor",
+                  "canonicalReference": "@tldraw/editor!TLBindingUtilConstructor:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "TLUnknownBinding",
+                  "canonicalReference": "@tldraw/tlschema!TLUnknownBinding:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "bindingUtils",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 6
+              }
+            },
             {
               "kind": "PropertySignature",
               "canonicalReference": "@tldraw/editor!TLEditorOptions#getContainer:member",
@@ -42037,8 +43699,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TLShapePropsMigrations",
-                  "canonicalReference": "@tldraw/tlschema!TLShapePropsMigrations:type"
+                  "text": "TLRecordPropsMigrations",
+                  "canonicalReference": "@tldraw/tlschema!TLRecordPropsMigrations:type"
                 },
                 {
                   "kind": "Content",
@@ -42065,8 +43727,8 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "ShapeProps",
-                  "canonicalReference": "@tldraw/tlschema!ShapeProps:type"
+                  "text": "RecordProps",
+                  "canonicalReference": "@tldraw/tlschema!RecordProps:type"
                 },
                 {
                   "kind": "Content",
@@ -42465,6 +44127,15 @@
             },
             {
               "kind": "Content",
+              "text": "[];\n    bindingUtils?: readonly "
+            },
+            {
+              "kind": "Reference",
+              "text": "TLAnyBindingUtilConstructor",
+              "canonicalReference": "@tldraw/editor!TLAnyBindingUtilConstructor:type"
+            },
+            {
+              "kind": "Content",
               "text": "[];\n})"
             },
             {
@@ -42477,7 +44148,7 @@
           "name": "TLStoreOptions",
           "typeTokenRange": {
             "startIndex": 1,
-            "endIndex": 14
+            "endIndex": 16
           }
         },
         {

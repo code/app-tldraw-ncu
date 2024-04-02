@@ -120,6 +120,7 @@ export type LegacyMigration<Before = any, After = any> = {
 /** @public */
 export type MigrationId = `${string}/${number}`
 
+/** @public */
 export type StandaloneDependsOn = {
 	readonly dependsOn: readonly MigrationId[]
 }

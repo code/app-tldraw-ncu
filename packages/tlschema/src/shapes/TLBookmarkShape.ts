@@ -1,7 +1,11 @@
 import { T } from '@tldraw/validate'
 import { assetIdValidator } from '../assets/TLBaseAsset'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
-import { ShapePropsType, TLBaseShape } from './TLBaseShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
+import { TLBaseShape } from './TLBaseShape'
 
 /** @public */
 export const bookmarkShapeProps = {
@@ -12,7 +16,7 @@ export const bookmarkShapeProps = {
 }
 
 /** @public */
-export type TLBookmarkShapeProps = ShapePropsType<typeof bookmarkShapeProps>
+export type TLBookmarkShapeProps = RecordPropsType<typeof bookmarkShapeProps>
 
 /** @public */
 export type TLBookmarkShape = TLBaseShape<'bookmark', TLBookmarkShapeProps>
@@ -25,7 +29,7 @@ const Versions = {
 export { Versions as bookmarkShapeVersions }
 
 /** @internal */
-export const bookmarkShapeMigrations = createShapePropsMigrations({
+export const bookmarkShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: Versions.NullAssetId,

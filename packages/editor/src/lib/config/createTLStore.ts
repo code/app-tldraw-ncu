@@ -1,13 +1,12 @@
 import { HistoryEntry, SerializedStore, Store, StoreSchema } from '@tldraw/store'
 import {
-	SchemaShapeInfo,
+	SchemaWithPropsInfo,
 	TLRecord,
 	TLStore,
 	TLStoreProps,
-	TLUnknownShape,
 	createTLSchema,
 } from '@tldraw/tlschema'
-import { TLShapeUtilConstructor } from '../editor/shapes/ShapeUtil'
+import { TLAnyBindingUtilConstructor, checkBindings } from './defaultBindings'
 import { TLAnyShapeUtilConstructor, checkShapesAndAddCore } from './defaultShapes'
 
 /** @public */
@@ -15,7 +14,10 @@ export type TLStoreOptions = {
 	initialData?: SerializedStore<TLRecord>
 	defaultName?: string
 } & (
-	| { shapeUtils?: readonly TLAnyShapeUtilConstructor[] }
+	| {
+			shapeUtils?: readonly TLAnyShapeUtilConstructor[]
+			bindingUtils?: readonly TLAnyBindingUtilConstructor[]
+	  }
 	| { schema?: StoreSchema<TLRecord, TLStoreProps> }
 )
 
@@ -35,8 +37,11 @@ export function createTLStore({ initialData, defaultName = '', ...rest }: TLStor
 				rest.schema
 			: // we need a schema
 				createTLSchema({
-					shapes: currentPageShapesToShapeMap(
+					shapes: utilsToMap(
 						checkShapesAndAddCore('shapeUtils' in rest && rest.shapeUtils ? rest.shapeUtils : [])
+					),
+					bindings: utilsToMap(
+						checkBindings('bindingUtils' in rest && rest.bindingUtils ? rest.bindingUtils : [])
 					),
 				})
 
@@ -49,9 +54,9 @@ export function createTLStore({ initialData, defaultName = '', ...rest }: TLStor
 	})
 }
 
-function currentPageShapesToShapeMap(shapeUtils: TLShapeUtilConstructor<TLUnknownShape>[]) {
+function utilsToMap<T extends SchemaWithPropsInfo & { type: string }>(utils: T[]) {
 	return Object.fromEntries(
-		shapeUtils.map((s): [string, SchemaShapeInfo] => [
+		utils.map((s): [string, SchemaWithPropsInfo] => [
 			s.type,
 			{
 				props: s.props,

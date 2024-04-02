@@ -109,6 +109,7 @@ export {
 	type TLStoreOptions,
 } from './lib/config/createTLStore'
 export { createTLUser } from './lib/config/createTLUser'
+export { type TLAnyBindingUtilConstructor } from './lib/config/defaultBindings'
 export { coreShapes, type TLAnyShapeUtilConstructor } from './lib/config/defaultShapes'
 export {
 	ANIMATION_MEDIUM_MS,
@@ -134,6 +135,7 @@ export {
 	type TLEditorOptions,
 	type TLResizeShapeOptions,
 } from './lib/editor/Editor'
+export { BindingUtil, type TLBindingUtilConstructor } from './lib/editor/bindings/BindingUtil'
 export type {
 	SideEffectManager,
 	TLAfterChangeHandler,
@@ -189,7 +191,12 @@ export {
 	type TLArrowInfo,
 	type TLArrowPoint,
 } from './lib/editor/shapes/shared/arrow/arrow-types'
-export { getArrowTerminalsInArrowSpace } from './lib/editor/shapes/shared/arrow/shared'
+export {
+	ensureArrowBinding,
+	ensureNoArrowBinding,
+	getArrowBindings,
+	getArrowTerminalsInArrowSpace,
+} from './lib/editor/shapes/shared/arrow/shared'
 export { resizeBox, type ResizeBoxOptions } from './lib/editor/shapes/shared/resizeBox'
 export { BaseBoxShapeTool } from './lib/editor/tools/BaseBoxShapeTool/BaseBoxShapeTool'
 export { StateNode, type TLStateNodeConstructor } from './lib/editor/tools/StateNode'

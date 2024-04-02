@@ -250,6 +250,11 @@ export type SerializedStore<R extends UnknownRecord> = Record<IdOf<R>, R>;
 // @public
 export function squashRecordDiffs<T extends UnknownRecord>(diffs: RecordsDiff<T>[]): RecordsDiff<T>;
 
+// @public (undocumented)
+export type StandaloneDependsOn = {
+    readonly dependsOn: readonly MigrationId[];
+};
+
 // @public
 export class Store<R extends UnknownRecord = UnknownRecord, Props = unknown> {
     constructor(config: {

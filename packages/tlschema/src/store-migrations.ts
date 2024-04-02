@@ -1,12 +1,16 @@
 import { createMigrationIds, createMigrations } from '@tldraw/store'
 import { objectMapEntries } from '@tldraw/utils'
-import { TLShape } from './records/TLShape'
+import { TLArrowBinding } from './bindings/TLArrowBinding'
+import { VecModel } from './misc/geometry-types'
+import { createBindingId } from './records/TLBinding'
+import { TLShape, TLShapeId } from './records/TLShape'
 
 const Versions = createMigrationIds('com.tldraw.store', {
 	RemoveCodeAndIconShapeTypes: 1,
 	AddInstancePresenceType: 2,
 	RemoveTLUserAndPresenceAndAddPointer: 3,
 	RemoveUserDocument: 4,
+	ExtractArrowBindings: 5,
 } as const)
 
 export { Versions as storeVersions }
@@ -60,6 +64,81 @@ export const storeMigrations = createMigrations({
 					if (record.typeName.match('user_document')) {
 						delete store[id]
 					}
+				}
+			},
+		},
+		{
+			id: Versions.ExtractArrowBindings,
+			scope: 'store',
+			dependsOn: ['com.tldraw.shape.arrow/3'],
+			up: (store) => {
+				type OldArrowTerminal =
+					| {
+							type: 'point'
+							x: number
+							y: number
+					  }
+					| {
+							type: 'binding'
+							boundShapeId: TLShapeId
+							normalizedAnchor: VecModel
+							isExact: boolean
+							isPrecise: boolean
+					  }
+
+				const arrows: any[] = Object.values(store).filter(
+					(r: any) => r.typeName === 'shape' && r.type === 'arrow'
+				)
+
+				const bindings: TLArrowBinding[] = []
+				for (const arrow of arrows) {
+					const { start, end } = (
+						arrow as { props: { start: OldArrowTerminal; end: OldArrowTerminal } }
+					).props
+
+					if (start.type === 'binding') {
+						bindings.push({
+							id: createBindingId(),
+							typeName: 'binding',
+							type: 'arrow',
+							fromId: arrow.id,
+							toId: start.boundShapeId,
+							meta: {},
+							props: {
+								terminal: 'start',
+								normalizedAnchor: start.normalizedAnchor,
+								isExact: start.isExact,
+								isPrecise: start.isPrecise,
+							},
+						})
+						arrow.props.start = { x: 0, y: 0 }
+					} else {
+						arrow.props.start = { x: start.x, y: start.y }
+					}
+
+					if (end.type === 'binding') {
+						bindings.push({
+							id: createBindingId(),
+							typeName: 'binding',
+							type: 'arrow',
+							fromId: arrow.id,
+							toId: end.boundShapeId,
+							meta: {},
+							props: {
+								terminal: 'end',
+								normalizedAnchor: end.normalizedAnchor,
+								isExact: end.isExact,
+								isPrecise: end.isPrecise,
+							},
+						})
+						arrow.props.end = { x: 0, y: 0 }
+					} else {
+						arrow.props.end = { x: end.x, y: end.y }
+					}
+				}
+
+				for (const binding of bindings) {
+					store[binding.id] = binding
 				}
 			},
 		},

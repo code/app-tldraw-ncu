@@ -42,8 +42,8 @@ export function getCurvedArrowInfo(
 	const u = Vec.Len(distance) ? distance.uni() : Vec.From(distance) // unit vector between start and end
 	const middle = Vec.Add(med, u.per().mul(-bend)) // middle handle
 
-	const startShapeInfo = getBoundShapeInfoForTerminal(editor, shape.props.start)
-	const endShapeInfo = getBoundShapeInfoForTerminal(editor, shape.props.end)
+	const startShapeInfo = getBoundShapeInfoForTerminal(editor, shape, 'start')
+	const endShapeInfo = getBoundShapeInfoForTerminal(editor, shape, 'end')
 
 	// The positions of the body of the arrow, which may be different
 	// than the arrow's start / end points if the arrow is bound to shapes

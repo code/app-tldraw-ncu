@@ -1,7 +1,11 @@
 import { T } from '@tldraw/validate'
 import { assetIdValidator } from '../assets/TLBaseAsset'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
-import { ShapePropsType, TLBaseShape } from './TLBaseShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
+import { TLBaseShape } from './TLBaseShape'
 
 /** @public */
 export const videoShapeProps = {
@@ -14,7 +18,7 @@ export const videoShapeProps = {
 }
 
 /** @public */
-export type TLVideoShapeProps = ShapePropsType<typeof videoShapeProps>
+export type TLVideoShapeProps = RecordPropsType<typeof videoShapeProps>
 
 /** @public */
 export type TLVideoShape = TLBaseShape<'video', TLVideoShapeProps>
@@ -27,7 +31,7 @@ const Versions = {
 export { Versions as videoShapeVersions }
 
 /** @internal */
-export const videoShapeMigrations = createShapePropsMigrations({
+export const videoShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: Versions.AddUrlProp,

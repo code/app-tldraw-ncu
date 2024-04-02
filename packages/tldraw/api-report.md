@@ -32,7 +32,6 @@ import { MatModel } from '@tldraw/editor';
 import { MemoExoticComponent } from 'react';
 import { MigrationFailureReason } from '@tldraw/editor';
 import { NamedExoticComponent } from 'react';
-import { ObjectValidator } from '@tldraw/editor';
 import { Polygon2d } from '@tldraw/editor';
 import { Polyline2d } from '@tldraw/editor';
 import { default as React_2 } from 'react';
@@ -53,6 +52,7 @@ import { StoreSnapshot } from '@tldraw/editor';
 import { StyleProp } from '@tldraw/editor';
 import { SvgExportContext } from '@tldraw/editor';
 import { T } from '@tldraw/editor';
+import { TLAnyBindingUtilConstructor } from '@tldraw/editor';
 import { TLAnyShapeUtilConstructor } from '@tldraw/editor';
 import { TLArrowShape } from '@tldraw/editor';
 import { TLAssetId } from '@tldraw/editor';
@@ -103,6 +103,7 @@ import { TLPointerEvent } from '@tldraw/editor';
 import { TLPointerEventInfo } from '@tldraw/editor';
 import { TLPointerEventName } from '@tldraw/editor';
 import { TLRecord } from '@tldraw/editor';
+import { TLRecordPropsMigrations } from '@tldraw/editor';
 import { TLRotationSnapshot } from '@tldraw/editor';
 import { TLSchema } from '@tldraw/editor';
 import { TLScribbleProps } from '@tldraw/editor';
@@ -112,7 +113,6 @@ import { TLSelectionHandle } from '@tldraw/editor';
 import { TLShape } from '@tldraw/editor';
 import { TLShapeId } from '@tldraw/editor';
 import { TLShapePartial } from '@tldraw/editor';
-import { TLShapePropsMigrations } from '@tldraw/editor';
 import { TLShapeUtilCanvasSvgDef } from '@tldraw/editor';
 import { TLShapeUtilFlag } from '@tldraw/editor';
 import { TLStore } from '@tldraw/editor';
@@ -121,7 +121,6 @@ import { TLSvgOptions } from '@tldraw/editor';
 import { TLTextShape } from '@tldraw/editor';
 import { TLUnknownShape } from '@tldraw/editor';
 import { TLVideoShape } from '@tldraw/editor';
-import { UnionValidator } from '@tldraw/editor';
 import { UnknownRecord } from '@tldraw/editor';
 import { Validator } from '@tldraw/editor';
 import { Vec } from '@tldraw/editor';
@@ -192,7 +191,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
     // (undocumented)
     indicator(shape: TLArrowShape): JSX_2.Element | null;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onDoubleClickHandle: (shape: TLArrowShape, handle: TLHandle) => TLShapePartial<TLArrowShape> | void;
     // (undocumented)
@@ -215,34 +214,8 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
         arrowheadStart: EnumStyleProp<"arrow" | "bar" | "diamond" | "dot" | "inverted" | "none" | "pipe" | "square" | "triangle">;
         arrowheadEnd: EnumStyleProp<"arrow" | "bar" | "diamond" | "dot" | "inverted" | "none" | "pipe" | "square" | "triangle">;
         font: EnumStyleProp<"draw" | "mono" | "sans" | "serif">;
-        start: UnionValidator<"type", {
-        binding: ObjectValidator<    {
-        type: "binding";
-        boundShapeId: TLShapeId;
-        normalizedAnchor: VecModel;
-        isExact: boolean;
-        isPrecise: boolean;
-        }>;
-        point: ObjectValidator<    {
-        x: number;
-        y: number;
-        type: "point";
-        }>;
-        }, never>;
-        end: UnionValidator<"type", {
-        binding: ObjectValidator<    {
-        type: "binding";
-        boundShapeId: TLShapeId;
-        normalizedAnchor: VecModel;
-        isExact: boolean;
-        isPrecise: boolean;
-        }>;
-        point: ObjectValidator<    {
-        x: number;
-        y: number;
-        type: "point";
-        }>;
-        }, never>;
+        start: Validator<VecModel>;
+        end: Validator<VecModel>;
         bend: Validator<number>;
         text: Validator<string>;
         labelPosition: Validator<number>;
@@ -281,7 +254,7 @@ export class BookmarkShapeUtil extends BaseBoxShapeUtil<TLBookmarkShape> {
     // (undocumented)
     indicator(shape: TLBookmarkShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onBeforeCreate?: TLOnBeforeCreateHandler<TLBookmarkShape>;
     // (undocumented)
@@ -489,7 +462,7 @@ export class DrawShapeUtil extends ShapeUtil<TLDrawShape> {
     // (undocumented)
     indicator(shape: TLDrawShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onResize: TLOnResizeHandler<TLDrawShape>;
     // (undocumented)
@@ -548,7 +521,7 @@ export class EmbedShapeUtil extends BaseBoxShapeUtil<TLEmbedShape> {
     // (undocumented)
     isAspectRatioLocked: TLShapeUtilFlag<TLEmbedShape>;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onResize: TLOnResizeHandler<TLEmbedShape>;
     // (undocumented)
@@ -655,7 +628,7 @@ export class FrameShapeUtil extends BaseBoxShapeUtil<TLFrameShape> {
     // (undocumented)
     indicator(shape: TLFrameShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onDragShapesOut: (_shape: TLFrameShape, shapes: TLShape[]) => void;
     // (undocumented)
@@ -712,7 +685,7 @@ export class GeoShapeUtil extends BaseBoxShapeUtil<TLGeoShape> {
     // (undocumented)
     indicator(shape: TLGeoShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onBeforeCreate: (shape: TLGeoShape) => {
         props: {
@@ -910,7 +883,7 @@ export class HighlightShapeUtil extends ShapeUtil<TLHighlightShape> {
     // (undocumented)
     indicator(shape: TLHighlightShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onResize: TLOnResizeHandler<TLHighlightShape>;
     // (undocumented)
@@ -948,7 +921,7 @@ export class ImageShapeUtil extends BaseBoxShapeUtil<TLImageShape> {
     // (undocumented)
     isAspectRatioLocked: () => boolean;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onDoubleClick: (shape: TLImageShape) => void;
     // (undocumented)
@@ -1049,7 +1022,7 @@ export class LineShapeUtil extends ShapeUtil<TLLineShape> {
     // (undocumented)
     indicator(shape: TLLineShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onHandleDrag: TLOnHandleDragHandler<TLLineShape>;
     // (undocumented)
@@ -1113,7 +1086,7 @@ export class NoteShapeUtil extends ShapeUtil<TLNoteShape> {
     // (undocumented)
     indicator(shape: TLNoteShape): JSX_2.Element;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onBeforeCreate: (next: TLNoteShape) => {
         props: {
@@ -1337,7 +1310,7 @@ export class TextShapeUtil extends ShapeUtil<TLTextShape> {
     // (undocumented)
     isAspectRatioLocked: TLShapeUtilFlag<TLTextShape>;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     onBeforeCreate: (shape: TLTextShape) => {
         x: number;
@@ -1463,6 +1436,7 @@ snapshot: StoreSnapshot<TLRecord>;
 format?: "png" | "svg" | undefined;
 pageId?: TLPageId | undefined;
 shapeUtils?: readonly TLAnyShapeUtilConstructor[] | undefined;
+bindingUtils?: readonly TLAnyBindingUtilConstructor[] | undefined;
 bounds?: Box | undefined;
 scale?: number | undefined;
 background?: boolean | undefined;
@@ -1477,6 +1451,7 @@ export type TldrawImageProps = Expand<{
     format?: 'png' | 'svg';
     pageId?: TLPageId;
     shapeUtils?: readonly TLAnyShapeUtilConstructor[];
+    bindingUtils?: readonly TLAnyBindingUtilConstructor[];
 } & Partial<TLSvgOptions>>;
 
 // @public (undocumented)
@@ -2594,7 +2569,7 @@ export class VideoShapeUtil extends BaseBoxShapeUtil<TLVideoShape> {
     // (undocumented)
     isAspectRatioLocked: () => boolean;
     // (undocumented)
-    static migrations: TLShapePropsMigrations;
+    static migrations: TLRecordPropsMigrations;
     // (undocumented)
     static props: {
         w: Validator<number>;

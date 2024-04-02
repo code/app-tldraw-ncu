@@ -1,4 +1,10 @@
-import { TLArrowShape, TLArrowShapeTerminal, TLShape, TLShapeId } from '@tldraw/tlschema'
+import {
+	TLArrowBinding,
+	TLArrowBindingProps,
+	TLArrowShape,
+	TLShape,
+	TLShapeId,
+} from '@tldraw/tlschema'
 import { Mat } from '../../../../primitives/Mat'
 import { Vec } from '../../../../primitives/Vec'
 import { Group2d } from '../../../../primitives/geometry/Group2d'
@@ -19,15 +25,17 @@ export type BoundShapeInfo<T extends TLShape = TLShape> = {
 
 export function getBoundShapeInfoForTerminal(
 	editor: Editor,
-	terminal: TLArrowShapeTerminal
+	arrow: TLArrowShape,
+	terminalName: 'start' | 'end'
 ): BoundShapeInfo | undefined {
-	if (terminal.type === 'point') {
-		return
-	}
+	const binding = editor
+		.getBindingsFromShape<TLArrowBinding>(arrow, 'arrow')
+		.find((b) => b.props.terminal === terminalName)
+	if (!binding) return
 
-	const shape = editor.getShape(terminal.boundShapeId)!
-	const transform = editor.getShapePageTransform(shape)!
-	const geometry = editor.getShapeGeometry(shape)
+	const boundShape = editor.getShape(binding.toId)!
+	const transform = editor.getShapePageTransform(boundShape)!
+	const geometry = editor.getShapeGeometry(boundShape)
 
 	// This is hacky: we're only looking at the first child in the group. Really the arrow should
 	// consider all items in the group which are marked as snappable as separate polygons with which
@@ -36,10 +44,10 @@ export function getBoundShapeInfoForTerminal(
 	const outline = geometry instanceof Group2d ? geometry.children[0].vertices : geometry.vertices
 
 	return {
-		shape,
+		shape: boundShape,
 		transform,
 		isClosed: geometry.isClosed,
-		isExact: terminal.isExact,
+		isExact: binding.props.isExact,
 		didIntersect: false,
 		outline,
 	}
@@ -48,14 +56,10 @@ export function getBoundShapeInfoForTerminal(
 function getArrowTerminalInArrowSpace(
 	editor: Editor,
 	arrowPageTransform: Mat,
-	terminal: TLArrowShapeTerminal,
+	binding: TLArrowBinding,
 	forceImprecise: boolean
 ) {
-	if (terminal.type === 'point') {
-		return Vec.From(terminal)
-	}
-
-	const boundShape = editor.getShape(terminal.boundShapeId)
+	const boundShape = editor.getShape(binding.toId)
 
 	if (!boundShape) {
 		// this can happen in multiplayer contexts where the shape is being deleted
@@ -69,7 +73,9 @@ function getArrowTerminalInArrowSpace(
 			point,
 			Vec.MulV(
 				// if the parent is the bound shape, then it's ALWAYS precise
-				terminal.isPrecise || forceImprecise ? terminal.normalizedAnchor : { x: 0.5, y: 0.5 },
+				binding.props.isPrecise || forceImprecise
+					? binding.props.normalizedAnchor
+					: { x: 0.5, y: 0.5 },
 				size
 			)
 		)
@@ -79,39 +85,91 @@ function getArrowTerminalInArrowSpace(
 	}
 }
 
+/** @internal */
+export function getArrowBindings(editor: Editor, shape: TLArrowShape) {
+	const bindings = editor.getBindingsFromShape<TLArrowBinding>(shape, 'arrow')
+	return {
+		start: bindings.find((b) => b.props.terminal === 'start'),
+		end: bindings.find((b) => b.props.terminal === 'end'),
+	}
+}
+
 /** @public */
 export function getArrowTerminalsInArrowSpace(editor: Editor, shape: TLArrowShape) {
 	const arrowPageTransform = editor.getShapePageTransform(shape)!
 
-	let startBoundShapeId: TLShapeId | undefined
-	let endBoundShapeId: TLShapeId | undefined
-
-	if (shape.props.start.type === 'binding' && shape.props.end.type === 'binding') {
-		startBoundShapeId = shape.props.start.boundShapeId
-		endBoundShapeId = shape.props.end.boundShapeId
-	}
+	const bindings = getArrowBindings(editor, shape)
 
 	const boundShapeRelationships = getBoundShapeRelationships(
 		editor,
-		startBoundShapeId,
-		endBoundShapeId
+		bindings.start?.toId,
+		bindings.end?.toId
 	)
 
-	const start = getArrowTerminalInArrowSpace(
-		editor,
-		arrowPageTransform,
-		shape.props.start,
-		boundShapeRelationships === 'double-bound' || boundShapeRelationships === 'start-contains-end'
-	)
+	const start = bindings.start
+		? getArrowTerminalInArrowSpace(
+				editor,
+				arrowPageTransform,
+				bindings.start,
+				boundShapeRelationships === 'double-bound' ||
+					boundShapeRelationships === 'start-contains-end'
+			)
+		: Vec.From(shape.props.start)
 
-	const end = getArrowTerminalInArrowSpace(
-		editor,
-		arrowPageTransform,
-		shape.props.end,
-		boundShapeRelationships === 'double-bound' || boundShapeRelationships === 'end-contains-start'
-	)
+	const end = bindings.end
+		? getArrowTerminalInArrowSpace(
+				editor,
+				arrowPageTransform,
+				bindings.end,
+				boundShapeRelationships === 'double-bound' ||
+					boundShapeRelationships === 'end-contains-start'
+			)
+		: Vec.From(shape.props.end)
 
 	return { start, end }
+}
+
+/** @internal */
+export function ensureArrowBinding(
+	editor: Editor,
+	arrow: TLArrowShape | TLShapeId,
+	target: TLShape | TLShapeId,
+	props: TLArrowBindingProps
+) {
+	const arrowId = typeof arrow === 'string' ? arrow : arrow.id
+	const targetId = typeof target === 'string' ? target : target.id
+
+	const existing = editor
+		.getBindingsFromShape<TLArrowBinding>(arrowId, 'arrow')
+		.find((b) => b.props.terminal === props.terminal)
+	if (existing) {
+		editor.updateBinding({
+			...existing,
+			toId: targetId,
+			props,
+		})
+	} else {
+		editor.createBinding({
+			type: 'arrow',
+			fromId: arrowId,
+			toId: targetId,
+			props,
+		})
+	}
+}
+
+/** @internal */
+export function ensureNoArrowBinding(
+	editor: Editor,
+	arrow: TLArrowShape,
+	terminal: 'start' | 'end'
+) {
+	const existing = editor
+		.getBindingsFromShape<TLArrowBinding>(arrow, 'arrow')
+		.find((b) => b.props.terminal === terminal)
+	if (existing) {
+		editor.deleteBinding(existing.id)
+	}
 }
 
 /** @internal */

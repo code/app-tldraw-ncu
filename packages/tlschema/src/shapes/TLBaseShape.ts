@@ -1,5 +1,5 @@
 import { BaseRecord } from '@tldraw/store'
-import { Expand, IndexKey, JsonObject } from '@tldraw/utils'
+import { IndexKey, JsonObject } from '@tldraw/utils'
 import { T } from '@tldraw/validate'
 import { TLOpacityType, opacityValidator } from '../misc/TLOpacity'
 import { idValidator } from '../misc/id-validator'
@@ -31,7 +31,6 @@ export const parentIdValidator = T.string.refine((id) => {
 /** @public */
 export const shapeIdValidator = idValidator<TLShapeId>('shape')
 
-/** @public */
 export function createShapeValidator<
 	Type extends string,
 	Props extends JsonObject,
@@ -56,12 +55,3 @@ export function createShapeValidator<
 		meta: meta ? T.object(meta) : (T.jsonValue as any),
 	})
 }
-
-/** @public */
-export type ShapeProps<Shape extends TLBaseShape<any, any>> = {
-	[K in keyof Shape['props']]: T.Validatable<Shape['props'][K]>
-}
-
-export type ShapePropsType<Config extends Record<string, T.Validatable<any>>> = Expand<{
-	[K in keyof Config]: T.TypeOf<Config[K]>
-}>

@@ -1,11 +1,15 @@
 import { IndexKey, getIndices, objectMapFromEntries, sortByIndex } from '@tldraw/utils'
 import { T } from '@tldraw/validate'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
 import { StyleProp } from '../styles/StyleProp'
 import { DefaultColorStyle } from '../styles/TLColorStyle'
 import { DefaultDashStyle } from '../styles/TLDashStyle'
 import { DefaultSizeStyle } from '../styles/TLSizeStyle'
-import { ShapePropsType, TLBaseShape } from './TLBaseShape'
+import { TLBaseShape } from './TLBaseShape'
 
 /** @public */
 export const LineShapeSplineStyle = StyleProp.defineEnum('tldraw:spline', {
@@ -33,7 +37,7 @@ export const lineShapeProps = {
 }
 
 /** @public */
-export type TLLineShapeProps = ShapePropsType<typeof lineShapeProps>
+export type TLLineShapeProps = RecordPropsType<typeof lineShapeProps>
 
 /** @public */
 export type TLLineShape = TLBaseShape<'line', TLLineShapeProps>
@@ -47,7 +51,7 @@ export const lineShapeVersions = {
 } as const
 
 /** @internal */
-export const lineShapeMigrations = createShapePropsMigrations({
+export const lineShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: lineShapeVersions.AddSnapHandles,

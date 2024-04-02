@@ -4,7 +4,15 @@ import { TLStoreProps, createIntegrityChecker, onValidationFailure } from './TLS
 import { bookmarkAssetMigrations } from './assets/TLBookmarkAsset'
 import { imageAssetMigrations } from './assets/TLImageAsset'
 import { videoAssetMigrations } from './assets/TLVideoAsset'
+import { arrowBindingMigrations, arrowBindingProps } from './bindings/TLArrowBinding'
+import { TLRecordPropsMigrations, processRecordPropsMigrations } from './propsMigrations'
 import { AssetRecordType, assetMigrations } from './records/TLAsset'
+import {
+	TLBinding,
+	TLDefaultBinding,
+	createBindingRecordType,
+	rootBindingMigrations,
+} from './records/TLBinding'
 import { CameraRecordType, cameraMigrations } from './records/TLCamera'
 import { DocumentRecordType, documentMigrations } from './records/TLDocument'
 import { createInstanceRecordType, instanceMigrations } from './records/TLInstance'
@@ -15,10 +23,9 @@ import { InstancePresenceRecordType, instancePresenceMigrations } from './record
 import { TLRecord } from './records/TLRecord'
 import {
 	TLDefaultShape,
-	TLShapePropsMigrations,
+	TLShape,
 	createShapeRecordType,
 	getShapePropKeysByStyle,
-	processShapeMigrations,
 	rootShapeMigrations,
 } from './records/TLShape'
 import { arrowShapeMigrations, arrowShapeProps } from './shapes/TLArrowShape'
@@ -43,8 +50,8 @@ type AnyValidator = {
 }
 
 /** @public */
-export type SchemaShapeInfo = {
-	migrations?: LegacyMigrations | TLShapePropsMigrations
+export type SchemaWithPropsInfo = {
+	migrations?: LegacyMigrations | TLRecordPropsMigrations
 	props?: Record<string, AnyValidator>
 	meta?: Record<string, AnyValidator>
 }
@@ -52,7 +59,7 @@ export type SchemaShapeInfo = {
 /** @public */
 export type TLSchema = StoreSchema<TLRecord, TLStoreProps>
 
-const defaultShapes: { [T in TLDefaultShape['type']]: SchemaShapeInfo } = {
+const defaultShapes: { [T in TLDefaultShape['type']]: SchemaWithPropsInfo } = {
 	arrow: { migrations: arrowShapeMigrations, props: arrowShapeProps },
 	bookmark: { migrations: bookmarkShapeMigrations, props: bookmarkShapeProps },
 	draw: { migrations: drawShapeMigrations, props: drawShapeProps },
@@ -68,6 +75,10 @@ const defaultShapes: { [T in TLDefaultShape['type']]: SchemaShapeInfo } = {
 	video: { migrations: videoShapeMigrations, props: videoShapeProps },
 }
 
+const defaultBindings: { [T in TLDefaultBinding['type']]: SchemaWithPropsInfo } = {
+	arrow: { migrations: arrowBindingMigrations, props: arrowBindingProps },
+}
+
 /**
  * Create a TLSchema with custom shapes. Custom shapes cannot override default shapes.
  *
@@ -76,9 +87,11 @@ const defaultShapes: { [T in TLDefaultShape['type']]: SchemaShapeInfo } = {
  * @public */
 export function createTLSchema({
 	shapes = defaultShapes,
+	bindings = defaultBindings,
 	// TODO: allow passing in custom migration sequences
 }: {
-	shapes?: Record<string, SchemaShapeInfo>
+	shapes?: Record<string, SchemaWithPropsInfo>
+	bindings?: Record<string, SchemaWithPropsInfo>
 } = {}): TLSchema {
 	const stylesById = new Map<string, StyleProp<unknown>>()
 	for (const shape of objectMapValues(shapes)) {
@@ -92,16 +105,18 @@ export function createTLSchema({
 
 	const ShapeRecordType = createShapeRecordType(shapes)
 	const InstanceRecordType = createInstanceRecordType(stylesById)
+	const BindingRecordType = createBindingRecordType(bindings)
 
 	return StoreSchema.create(
 		{
 			asset: AssetRecordType,
+			binding: BindingRecordType,
 			camera: CameraRecordType,
 			document: DocumentRecordType,
-			instance: InstanceRecordType,
 			instance_page_state: InstancePageStateRecordType,
-			page: PageRecordType,
 			instance_presence: InstancePresenceRecordType,
+			instance: InstanceRecordType,
+			page: PageRecordType,
 			pointer: PointerRecordType,
 			shape: ShapeRecordType,
 		},
@@ -117,12 +132,14 @@ export function createTLSchema({
 				instancePresenceMigrations,
 				pointerMigrations,
 				rootShapeMigrations,
+				rootBindingMigrations,
 
 				bookmarkAssetMigrations,
 				imageAssetMigrations,
 				videoAssetMigrations,
 
-				...processShapeMigrations(shapes),
+				...processRecordPropsMigrations<TLShape>('shape', shapes),
+				...processRecordPropsMigrations<TLBinding>('binding', bindings),
 			],
 			onValidationFailure,
 			createIntegrityChecker,

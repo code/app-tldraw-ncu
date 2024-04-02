@@ -1,5 +1,9 @@
 import { T } from '@tldraw/validate'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
 import { StyleProp } from '../styles/StyleProp'
 import { DefaultColorStyle, DefaultLabelColorStyle } from '../styles/TLColorStyle'
 import { DefaultDashStyle } from '../styles/TLDashStyle'
@@ -11,7 +15,7 @@ import {
 } from '../styles/TLHorizontalAlignStyle'
 import { DefaultSizeStyle } from '../styles/TLSizeStyle'
 import { DefaultVerticalAlignStyle } from '../styles/TLVerticalAlignStyle'
-import { ShapePropsType, TLBaseShape } from './TLBaseShape'
+import { TLBaseShape } from './TLBaseShape'
 
 /** @public */
 export const GeoShapeGeoStyle = StyleProp.defineEnum('tldraw:geo', {
@@ -61,7 +65,7 @@ export const geoShapeProps = {
 }
 
 /** @public */
-export type TLGeoShapeProps = ShapePropsType<typeof geoShapeProps>
+export type TLGeoShapeProps = RecordPropsType<typeof geoShapeProps>
 
 /** @public */
 export type TLGeoShape = TLBaseShape<'geo', TLGeoShapeProps>
@@ -80,7 +84,7 @@ const geoShapeVersions = {
 export { geoShapeVersions as geoShapeVersions }
 
 /** @internal */
-export const geoShapeMigrations = createShapePropsMigrations({
+export const geoShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: geoShapeVersions.AddUrlProp,

@@ -9,8 +9,15 @@ export { assetIdValidator, createAssetValidator, type TLBaseAsset } from './asse
 export { type TLBookmarkAsset } from './assets/TLBookmarkAsset'
 export { type TLImageAsset } from './assets/TLImageAsset'
 export { type TLVideoAsset } from './assets/TLVideoAsset'
+export {
+	arrowBindingMigrations,
+	arrowBindingProps,
+	type TLArrowBinding,
+	type TLArrowBindingProps,
+} from './bindings/TLArrowBinding'
+export { bindingIdValidator, type TLBaseBinding } from './bindings/TLBaseBinding'
 export { createPresenceStateDerivation } from './createPresenceStateDerivation'
-export { createTLSchema, type SchemaShapeInfo, type TLSchema } from './createTLSchema'
+export { createTLSchema, type SchemaWithPropsInfo, type TLSchema } from './createTLSchema'
 export {
 	TL_CANVAS_UI_COLOR_TYPES,
 	canvasUiColorTypeValidator,
@@ -28,6 +35,12 @@ export {
 } from './misc/geometry-types'
 export { idValidator } from './misc/id-validator'
 export {
+	createRecordPropsMigrations,
+	type RecordProps,
+	type RecordPropsType,
+	type TLRecordPropsMigrations,
+} from './propsMigrations'
+export {
 	AssetRecordType,
 	assetMigrations,
 	assetValidator,
@@ -36,6 +49,16 @@ export {
 	type TLAssetPartial,
 	type TLAssetShape,
 } from './records/TLAsset'
+export {
+	createBindingId,
+	isBinding,
+	isBindingId,
+	type TLBinding,
+	type TLBindingId,
+	type TLBindingPartial,
+	type TLDefaultBinding,
+	type TLUnknownBinding,
+} from './records/TLBinding'
 export { CameraRecordType, type TLCamera, type TLCameraId } from './records/TLCamera'
 export { DocumentRecordType, TLDOCUMENT_ID, type TLDocument } from './records/TLDocument'
 export { TLINSTANCE_ID, type TLInstance, type TLInstanceId } from './records/TLInstance'
@@ -63,7 +86,6 @@ export {
 	type TLShapePartial,
 	type TLShapeProp,
 	type TLShapeProps,
-	type TLShapePropsMigrations,
 	type TLUnknownShape,
 } from './records/TLShape'
 export {
@@ -74,15 +96,8 @@ export {
 	type TLArrowShape,
 	type TLArrowShapeArrowheadStyle,
 	type TLArrowShapeProps,
-	type TLArrowShapeTerminal,
 } from './shapes/TLArrowShape'
-export {
-	createShapeValidator,
-	parentIdValidator,
-	shapeIdValidator,
-	type ShapeProps,
-	type TLBaseShape,
-} from './shapes/TLBaseShape'
+export { parentIdValidator, shapeIdValidator, type TLBaseShape } from './shapes/TLBaseShape'
 export {
 	bookmarkShapeMigrations,
 	bookmarkShapeProps,

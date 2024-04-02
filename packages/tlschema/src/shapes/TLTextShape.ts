@@ -1,10 +1,14 @@
 import { T } from '@tldraw/validate'
-import { RETIRED_DOWN_MIGRATION, createShapePropsMigrations } from '../records/TLShape'
+import {
+	RETIRED_DOWN_MIGRATION,
+	RecordPropsType,
+	createRecordPropsMigrations,
+} from '../propsMigrations'
 import { DefaultColorStyle } from '../styles/TLColorStyle'
 import { DefaultFontStyle } from '../styles/TLFontStyle'
 import { DefaultHorizontalAlignStyle } from '../styles/TLHorizontalAlignStyle'
 import { DefaultSizeStyle } from '../styles/TLSizeStyle'
-import { ShapePropsType, TLBaseShape } from './TLBaseShape'
+import { TLBaseShape } from './TLBaseShape'
 
 /** @public */
 export const textShapeProps = {
@@ -19,7 +23,7 @@ export const textShapeProps = {
 }
 
 /** @public */
-export type TLTextShapeProps = ShapePropsType<typeof textShapeProps>
+export type TLTextShapeProps = RecordPropsType<typeof textShapeProps>
 
 /** @public */
 export type TLTextShape = TLBaseShape<'text', TLTextShapeProps>
@@ -31,7 +35,7 @@ const Versions = {
 export { Versions as textShapeVersions }
 
 /** @internal */
-export const textShapeMigrations = createShapePropsMigrations({
+export const textShapeMigrations = createRecordPropsMigrations({
 	sequence: [
 		{
 			version: Versions.RemoveJustify,
