@@ -66,6 +66,15 @@ export interface TldrawOptions {
 	 * external context providers. By default, this is `React.Fragment`.
 	 */
 	readonly exportProvider: ComponentType<{ children: React.ReactNode }>
+	/**
+	 * How should the note shape resize? By default it does not resize (except automatically based on its text content),
+	 * but you can set it to be user-resizable using scale.
+	 */
+	readonly noteShapeResizeMode: 'none' | 'scale'
+	/**
+	 * By default, the toolbar items are accessible via number shortcuts according to their order. To disable this, set this option to false.
+	 */
+	readonly enableToolbarKeyboardShortcuts: boolean
 }
 
 /** @public */
@@ -111,4 +120,6 @@ export const defaultTldrawOptions = {
 	actionShortcutsLocation: 'swap',
 	createTextOnCanvasDoubleClick: true,
 	exportProvider: Fragment,
+	noteShapeResizeMode: 'none',
+	enableToolbarKeyboardShortcuts: true,
 } as const satisfies TldrawOptions

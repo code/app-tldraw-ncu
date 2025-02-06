@@ -7,7 +7,14 @@ import {
 	ZStoreData,
 	ZTable,
 } from '@tldraw/dotcom-shared'
-import { ExecutionQueue, assert, promiseWithResolve, sleep, uniqueId } from '@tldraw/utils'
+import {
+	ExecutionQueue,
+	assert,
+	assertExists,
+	promiseWithResolve,
+	sleep,
+	uniqueId,
+} from '@tldraw/utils'
 import { createSentry } from '@tldraw/worker-shared'
 import { Kysely } from 'kysely'
 import { Logger } from './Logger'
@@ -102,7 +109,7 @@ export class UserDataSyncer {
 	replicator: TLPostgresReplicator
 
 	store = new OptimisticAppStore()
-	mutations: { mutationNumber: number; mutationId: string }[] = []
+	mutations: { mutationNumber: number; mutationId: string; timestamp: number }[] = []
 
 	sentry
 	private captureException(exception: unknown, extras?: Record<string, unknown>) {
@@ -117,8 +124,10 @@ export class UserDataSyncer {
 		}
 	}
 
+	interval: NodeJS.Timeout | null = null
+
 	constructor(
-		ctx: DurableObjectState,
+		private ctx: DurableObjectState,
 		env: Environment,
 		private db: Kysely<DB>,
 		private userId: string,
@@ -131,9 +140,30 @@ export class UserDataSyncer {
 		this.reboot(false)
 	}
 
+	maybeStartInterval() {
+		if (!this.interval) {
+			this.interval = setInterval(() => this.__rebootIfMutationsNotCommitted(), 1000)
+		}
+	}
+
+	stopInterval() {
+		if (this.interval) {
+			clearInterval(this.interval)
+			this.interval = null
+		}
+	}
+
 	private queue = new ExecutionQueue()
 
+	numConsecutiveReboots = 0
+
 	async reboot(delay = true) {
+		this.numConsecutiveReboots++
+		if (this.numConsecutiveReboots > 5) {
+			this.logEvent({ type: 'user_do_abort', id: this.userId })
+			this.ctx.abort()
+			return
+		}
 		this.log.debug('rebooting')
 		this.logEvent({ type: 'reboot', id: this.userId })
 		await this.queue.push(async () => {
@@ -142,6 +172,7 @@ export class UserDataSyncer {
 			}
 			try {
 				await this.boot()
+				this.numConsecutiveReboots = 0
 			} catch (e) {
 				this.logEvent({ type: 'reboot_error', id: this.userId })
 				this.captureException(e)
@@ -162,29 +193,37 @@ export class UserDataSyncer {
 
 	private updateStateAfterBootStep() {
 		assert(this.state.type === 'connecting', 'state should be connecting')
-		if (this.state.didGetBootId && this.state.data) {
-			// we got everything, so we can set the state to connected and apply any buffered events
-			const promise = this.state.promise
-			const bufferedEvents = this.state.bufferedEvents
-			const data = this.state.data
-			const mutationNumber = this.state.mutationNumber
-			this.state = {
-				type: 'connected',
-				bootId: this.state.bootId,
-				sequenceId: this.state.sequenceId,
-				lastSequenceNumber: this.state.lastSequenceNumber,
-			}
-			this.store.initialize(data)
+		if (this.state.data) {
+			if (this.state.didGetBootId) {
+				// we got everything, so we can set the state to connected and apply any buffered events
+				const promise = this.state.promise
+				const bufferedEvents = this.state.bufferedEvents
+				const data = this.state.data
+				const mutationNumber = this.state.mutationNumber
+				this.state = {
+					type: 'connected',
+					bootId: this.state.bootId,
+					sequenceId: this.state.sequenceId,
+					lastSequenceNumber: this.state.lastSequenceNumber,
+				}
+				this.store.initialize(data)
 
-			if (bufferedEvents.length > 0) {
-				bufferedEvents.forEach((event) => this.handleReplicationEvent(event))
+				if (bufferedEvents.length > 0) {
+					bufferedEvents.forEach((event) => this.handleReplicationEvent(event))
+					this.broadcast({
+						type: 'initial_data',
+						initialData: assertExists(this.store.getCommittedData()),
+					})
+				}
+				promise.resolve(null)
+
+				this.commitMutations(mutationNumber)
+			} else {
+				this.broadcast({
+					type: 'initial_data',
+					initialData: this.state.data,
+				})
 			}
-			promise.resolve(null)
-			this.broadcast({
-				type: 'initial_data',
-				initialData: data,
-			})
-			this.commitMutations(mutationNumber)
 		}
 		return this.state
 	}
@@ -354,9 +393,29 @@ export class UserDataSyncer {
 		// ignore other events until we get the boot id
 	}
 
+	getInitialData() {
+		if (this.state.type === 'connecting') {
+			return this.state.data
+		} else if (this.state.type === 'connected') {
+			return this.store.getCommittedData()
+		}
+		return null
+	}
+
 	async waitUntilConnected() {
 		while (this.state.type !== 'connected') {
 			await this.state.promise
+		}
+	}
+
+	private __rebootIfMutationsNotCommitted() {
+		// if any mutations have been not been committed for 5 seconds, let's reboot the cache
+		for (const mutation of this.mutations) {
+			if (Date.now() - mutation.timestamp > 5000) {
+				this.log.debug("Mutations haven't been committed for 5 seconds, rebooting")
+				this.reboot()
+				break
+			}
 		}
 	}
 }

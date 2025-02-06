@@ -24,10 +24,9 @@ import { type TLPostgresReplicator } from './TLPostgresReplicator'
 import { Analytics, Environment, TLUserDurableObjectEvent } from './types'
 import { UserDataSyncer, ZReplicationEvent } from './UserDataSyncer'
 import { EventData, writeDataPoint } from './utils/analytics'
-import { getReplicator } from './utils/durableObjects'
+import { getReplicator, getRoomDurableObject } from './utils/durableObjects'
 import { isRateLimited } from './utils/rateLimit'
 import { retryOnConnectionFailure } from './utils/retryOnConnectionFailure'
-import { getCurrentSerializedRoomSnapshot } from './utils/tla/getCurrentSerializedRoomSnapshot'
 
 export class TLUserDurableObject extends DurableObject<Environment> {
 	private readonly db: Kysely<DB>
@@ -78,29 +77,19 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 				throw new Error('Rate limited')
 			}
 			if (!this.cache) {
-				await this.init()
-			} else {
-				await this.cache.waitUntilConnected()
+				this.log.debug('creating cache', this.userId)
+				this.cache = new UserDataSyncer(
+					this.ctx,
+					this.env,
+					this.db,
+					this.userId,
+					(message) => this.broadcast(message),
+					this.logEvent.bind(this),
+					this.log
+				)
 			}
 		})
 		.get(`/app/:userId/connect`, (req) => this.onRequest(req))
-
-	private async init() {
-		assert(this.userId, 'User ID not set')
-		this.log.debug('init', this.userId)
-		this.cache = new UserDataSyncer(
-			this.ctx,
-			this.env,
-			this.db,
-			this.userId,
-			(message) => this.broadcast(message),
-			this.logEvent.bind(this),
-			this.log
-		)
-		this.log.debug('cache', !!this.cache)
-		await this.cache.waitUntilConnected()
-		this.log.debug('cache connected')
-	}
 
 	// Handle a request to the Durable Object.
 	override async fetch(req: IRequest) {
@@ -125,6 +114,7 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 
 	private assertCache(): asserts this is { cache: UserDataSyncer } {
 		assert(this.cache, 'no cache')
+		this.cache.maybeStartInterval()
 	}
 
 	private readonly sockets = new Set<WebSocket>()
@@ -141,6 +131,12 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 			) {
 				this.sockets.delete(socket)
 			}
+		}
+	}
+
+	maybeClose() {
+		if (this.sockets.size === 0) {
+			this.cache?.stopInterval()
 		}
 	}
 
@@ -173,20 +169,27 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 		)
 		serverWebSocket.addEventListener('close', () => {
 			this.sockets.delete(serverWebSocket)
+			this.maybeClose()
 		})
 		serverWebSocket.addEventListener('error', (e) => {
 			this.captureException(e, { source: 'serverWebSocket "error" event' })
 			this.sockets.delete(serverWebSocket)
+			this.maybeClose()
 		})
-		const initialData = this.cache.store.getCommittedData()
-		assert(initialData, 'Initial data not fetched')
-
-		serverWebSocket.send(
-			JSON.stringify({
-				type: 'initial_data',
-				initialData,
-			} satisfies ZServerSentMessage)
-		)
+		const initialData = this.cache.getInitialData()
+		if (initialData) {
+			this.log.debug('sending initial data')
+			serverWebSocket.send(
+				JSON.stringify({
+					type: 'initial_data',
+					initialData,
+				} satisfies ZServerSentMessage)
+			)
+		} else {
+			// the cache hasn't received the initial data yet, so we need to wait for it
+			// it will broadcast on its own
+			this.log.debug('waiting for initial data')
+		}
 
 		this.sockets.add(serverWebSocket)
 
@@ -291,7 +294,8 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 
 	private async _doMutate(msg: ZClientSentMessage) {
 		this.assertCache()
-		await this.db.transaction().execute(async (tx) => {
+		const insertedFiles = await this.db.transaction().execute(async (tx) => {
+			const insertedFiles: TlaFile[] = []
 			for (const update of msg.updates) {
 				await this.assertValidMutation(update)
 				switch (update.event) {
@@ -312,11 +316,15 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 							break
 						} else {
 							const { id: _id, ...rest } = update.row as any
-							await tx
+							const result = await tx
 								.insertInto(update.table)
 								.values(update.row as any)
 								.onConflict((oc) => oc.column('id').doUpdateSet(rest))
+								.returningAll()
 								.execute()
+							if (update.table === 'file' && result.length > 0) {
+								insertedFiles.push(result[0] as any as TlaFile)
+							}
 							break
 						}
 					}
@@ -379,7 +387,11 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 				}
 				this.cache.store.updateOptimisticData([update], msg.mutationId)
 			}
+			return insertedFiles
 		})
+		for (const file of insertedFiles) {
+			getRoomDurableObject(this.env, file.id).appFileRecordCreated(file)
+		}
 	}
 
 	private async handleMutate(socket: WebSocket, msg: ZClientSentMessage) {
@@ -419,7 +431,11 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 						`mutation number did not increment mutationNumber: ${mutationNumber} current: ${currentMutationNumber}`
 					)
 					this.log.debug('pushing mutation to cache', this.userId, mutationNumber)
-					this.cache.mutations.push({ mutationNumber, mutationId: msg.mutationId })
+					this.cache.mutations.push({
+						mutationNumber,
+						mutationId: msg.mutationId,
+						timestamp: Date.now(),
+					})
 				})
 				.catch((e) => {
 					this.cache.mutations = this.cache.mutations.filter((m) => m.mutationId !== msg.mutationId)
@@ -488,7 +504,15 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 		}
 
 		try {
-			const serializedSnapshot = await getCurrentSerializedRoomSnapshot(file.id, this.env)
+			// make sure the room's snapshot is up to date
+			await getRoomDurableObject(this.env, file.id).awaitPersist()
+			// and that it exists
+			const snapshot = await this.env.ROOMS.get(getR2KeyForRoom({ slug: file.id, isApp: true }))
+
+			if (!snapshot) {
+				throw new Error('Snapshot not found')
+			}
+			const blob = await snapshot.blob()
 
 			// Create a new slug for the published room
 			await this.env.SNAPSHOT_SLUG_TO_PARENT_SLUG.put(file.publishedSlug, file.id)
@@ -496,12 +520,12 @@ export class TLUserDurableObject extends DurableObject<Environment> {
 			// Bang the snapshot into the database
 			await this.env.ROOM_SNAPSHOTS.put(
 				getR2KeyForRoom({ slug: `${file.id}/${file.publishedSlug}`, isApp: true }),
-				serializedSnapshot
+				blob
 			)
 			const currentTime = new Date().toISOString()
 			await this.env.ROOM_SNAPSHOTS.put(
 				getR2KeyForRoom({ slug: `${file.id}/${file.publishedSlug}|${currentTime}`, isApp: true }),
-				serializedSnapshot
+				blob
 			)
 		} catch (e) {
 			throw new ZMutationError(ZErrorCode.publish_failed, 'Failed to publish snapshot', e)

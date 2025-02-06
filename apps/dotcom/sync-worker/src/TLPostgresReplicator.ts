@@ -1,4 +1,4 @@
-import { DB, ROOM_PREFIX, TlaFile, ZTable } from '@tldraw/dotcom-shared'
+import { DB, TlaFile, ZTable } from '@tldraw/dotcom-shared'
 import {
 	ExecutionQueue,
 	assert,
@@ -12,12 +12,11 @@ import { DurableObject } from 'cloudflare:workers'
 import { Kysely, sql } from 'kysely'
 import postgres from 'postgres'
 import { Logger } from './Logger'
-import type { TLDrawDurableObject } from './TLDrawDurableObject'
 import { ZReplicationEventWithoutSequenceInfo } from './UserDataSyncer'
 import { createPostgresConnection, createPostgresConnectionPool } from './postgres'
 import { Analytics, Environment, TLPostgresReplicatorEvent } from './types'
 import { EventData, writeDataPoint } from './utils/analytics'
-import { getUserDurableObject } from './utils/durableObjects'
+import { getRoomDurableObject, getUserDurableObject } from './utils/durableObjects'
 
 interface Migration {
 	id: string
@@ -441,16 +440,17 @@ export class TLPostgresReplicator extends DurableObject<Environment> {
 			.map((x) => x.userId as string)
 		// if the file state was deleted before the file, we might not have any impacted users
 		if (event.command === 'delete') {
-			this.getStubForFile(row.id).appFileRecordDidDelete()
+			getRoomDurableObject(this.env, row.id).appFileRecordDidDelete()
 			this.sql.exec(`DELETE FROM user_file_subscriptions WHERE fileId = ?`, row.id)
 		} else if (event.command === 'update') {
 			assert(row.ownerId, 'ownerId is required when updating file')
-			this.getStubForFile(row.id).appFileRecordDidUpdate(row as TlaFile)
+			getRoomDurableObject(this.env, row.id).appFileRecordDidUpdate(row as TlaFile)
 		} else if (event.command === 'insert') {
 			assert(row.ownerId, 'ownerId is required when inserting file')
 			if (!impactedUserIds.includes(row.ownerId)) {
 				impactedUserIds.push(row.ownerId)
 			}
+			getRoomDurableObject(this.env, row.id).appFileRecordCreated(row as TlaFile)
 		}
 		for (const userId of impactedUserIds) {
 			this.messageUser(userId, {
@@ -538,40 +538,44 @@ export class TLPostgresReplicator extends DurableObject<Environment> {
 		}
 	}
 
-	private getStubForFile(fileId: string) {
-		const id = this.env.TLDR_DOC.idFromName(`/${ROOM_PREFIX}/${fileId}`)
-		return this.env.TLDR_DOC.get(id) as any as TLDrawDurableObject
-	}
-
 	async registerUser(userId: string) {
-		this.log.debug('registering user', userId)
-		this.logEvent({ type: 'register_user' })
-		this.log.debug('reg user wait')
-		await this.waitUntilConnected()
-		this.log.debug('reg user connect')
-		assert(this.state.type === 'connected', 'state should be connected in registerUser')
-		const guestFiles = await this.state
-			.db`SELECT "fileId" as id FROM file_state where "userId" = ${userId}`
+		try {
+			this.log.debug('registering user', userId)
+			this.logEvent({ type: 'register_user' })
+			this.log.debug('reg user wait')
+			await this.waitUntilConnected()
+			this.log.debug('reg user connect')
+			assert(this.state.type === 'connected', 'state should be connected in registerUser')
+			const guestFiles = await this.state
+				.db`SELECT "fileId" as id FROM file_state where "userId" = ${userId}`
+			this.log.debug('got guest files')
 
-		const sequenceIdSuffix = uniqueId()
+			const sequenceIdSuffix = uniqueId()
 
-		// clear user and subscriptions
-		this.sql.exec(`DELETE FROM active_user WHERE id = ?`, userId)
-		this.sql.exec(
-			`INSERT INTO active_user (id, sequenceNumber, sequenceIdSuffix) VALUES (?, 0, ?)`,
-			userId,
-			sequenceIdSuffix
-		)
-		for (const file of guestFiles) {
+			// clear user and subscriptions
+			this.sql.exec(`DELETE FROM active_user WHERE id = ?`, userId)
+			this.log.debug('cleared active user')
 			this.sql.exec(
-				`INSERT INTO user_file_subscriptions (userId, fileId) VALUES (?, ?) ON CONFLICT (userId, fileId) DO NOTHING`,
+				`INSERT INTO active_user (id, sequenceNumber, sequenceIdSuffix) VALUES (?, 0, ?)`,
 				userId,
-				file.id
+				sequenceIdSuffix
 			)
-		}
-		return {
-			sequenceId: this.state.sequenceId + ':' + sequenceIdSuffix,
-			sequenceNumber: 0,
+			this.log.debug('inserted active user')
+			for (const file of guestFiles) {
+				this.sql.exec(
+					`INSERT INTO user_file_subscriptions (userId, fileId) VALUES (?, ?) ON CONFLICT (userId, fileId) DO NOTHING`,
+					userId,
+					file.id
+				)
+			}
+			this.log.debug('inserted guest files', guestFiles.length)
+			return {
+				sequenceId: this.state.sequenceId + ':' + sequenceIdSuffix,
+				sequenceNumber: 0,
+			}
+		} catch (e) {
+			this.captureException(e)
+			throw e
 		}
 	}
 

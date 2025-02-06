@@ -1,7 +1,7 @@
-import { TlaFile, TlaFileOpenState } from '@tldraw/dotcom-shared'
+import { TlaFile } from '@tldraw/dotcom-shared'
 import classNames from 'classnames'
-import { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { KeyboardEvent, MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { preventDefault, useContainer, useValue } from 'tldraw'
 import { routes } from '../../../../routeDefs'
 import { useApp } from '../../../hooks/useAppState'
@@ -81,7 +81,6 @@ export function TlaSidebarFileLinkInner({
 	const linkRef = useRef<HTMLAnchorElement | null>(null)
 	const app = useApp()
 	const intl = useIntl()
-	const state = useLocation().state as TlaFileOpenState | undefined
 	const focusCtx = useFileSidebarFocusContext()
 
 	const [isRenaming, setIsRenaming] = useState(debugIsRenaming)
@@ -98,11 +97,7 @@ export function TlaSidebarFileLinkInner({
 
 	useEffect(() => {
 		// on mount, trigger rename action if this is a new file.
-		if (
-			(state?.mode === 'create' || state?.mode === 'duplicate') &&
-			isActive &&
-			focusCtx.shouldRenameNextNewFile
-		) {
+		if (isActive && focusCtx.shouldRenameNextNewFile) {
 			focusCtx.shouldRenameNextNewFile = false
 			handleRenameAction()
 		}
@@ -145,7 +140,8 @@ export function TlaSidebarFileLinkInner({
 				onKeyDown={handleKeyDown}
 				onClick={(event) => {
 					// Don't navigate if we are already on the file page
-					if (isActive) {
+					// unless the user is holding ctrl or cmd to open in a new tab
+					if (isActive && !(event.ctrlKey || event.metaKey)) {
 						preventDefault(event)
 					}
 					trackEvent('click-file-link', { source: 'sidebar' })
@@ -160,36 +156,45 @@ export function TlaSidebarFileLinkInner({
 				>
 					{fileName}
 				</div>
-				{!isOwnFile && <GuestBadge file={file} />}
+				{!isOwnFile && <GuestBadge file={file} href={href} />}
 			</div>
 			<TlaSidebarFileLinkMenu fileId={fileId} onRenameAction={handleRenameAction} />
 		</div>
 	)
 }
 
-function GuestBadge({ file }: { file: TlaFile }) {
+function GuestBadge({ file, href }: { file: TlaFile; href: string }) {
 	const container = useContainer()
 	const ownerName = file.ownerName.trim()
+	const navigate = useNavigate()
+
+	const handleToolTipClick = useCallback(
+		(e: MouseEvent) => {
+			e.preventDefault()
+			// the tool tip needs pointer events in order to accept the click...
+			// but that means it also blocks the link to the file. Here we bend
+			// the world to our will, ruling by desire: clicking the tooltip will
+			// navigate to the file
+			navigate(href)
+		},
+		[navigate, href]
+	)
+
 	return (
 		<div className={styles.guestBadge}>
-			<TlaTooltipRoot>
+			<TlaTooltipRoot disableHoverableContent>
 				<TlaTooltipTrigger
 					dir="ltr"
 					// this is needed to prevent the tooltip from closing when clicking the badge
-					onClick={(e) => {
-						e.preventDefault()
-					}}
+					onClick={handleToolTipClick}
 					className={styles.guestBadgeTrigger}
 				>
-					<TlaIcon icon="group" />
+					<TlaIcon icon="group" className="tlui-guest-icon" />
 				</TlaTooltipTrigger>
 				<TlaTooltipPortal container={container}>
 					<TlaTooltipContent
-						style={{ zIndex: 200 }}
 						// this is also needed to prevent the tooltip from closing when clicking the badge
-						onPointerDownOutside={(event) => {
-							event.preventDefault()
-						}}
+						onPointerDownOutside={preventDefault}
 					>
 						{ownerName ? (
 							<F defaultMessage={`Shared by {ownerName}`} values={{ ownerName }} />

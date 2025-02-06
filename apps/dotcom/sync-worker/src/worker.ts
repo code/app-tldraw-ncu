@@ -19,6 +19,7 @@ import { getRoomHistory } from './routes/getRoomHistory'
 import { getRoomHistorySnapshot } from './routes/getRoomHistorySnapshot'
 import { getRoomSnapshot } from './routes/getRoomSnapshot'
 import { joinExistingRoom } from './routes/joinExistingRoom'
+import { submitFeedback } from './routes/submitFeedback'
 import { createFiles } from './routes/tla/createFiles'
 import { deleteFile } from './routes/tla/deleteFile'
 import { forwardRoomRequest } from './routes/tla/forwardRoomRequest'
@@ -69,6 +70,11 @@ const router = createRouter<Environment>()
 			console.log('auth not found')
 			return notFound()
 		}
+
+		if (req.headers.get('upgrade')?.toLowerCase() !== 'websocket') {
+			return notFound()
+		}
+
 		const stub = getUserDurableObject(env, auth.userId)
 		return stub.fetch(req)
 	})
@@ -98,13 +104,14 @@ const router = createRouter<Environment>()
 	.get('/app/__debug-tail', (req, env) => {
 		if (isDebugLogging(env)) {
 			// upgrade to websocket
-			if (req.headers.get('upgrade') === 'websocket') {
+			if (req.headers.get('upgrade')?.toLowerCase() === 'websocket') {
 				return getLogger(env).fetch(req)
 			}
 		}
 
 		return new Response('Not Found', { status: 404 })
 	})
+	.post('/app/submit-feedback', submitFeedback)
 	// end app
 	.all('*', notFound)
 

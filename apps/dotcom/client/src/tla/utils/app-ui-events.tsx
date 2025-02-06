@@ -16,6 +16,8 @@ export type TLAppUiEventSource =
 	| 'account-menu'
 	| 'top-bar'
 	| 'legacy-import-button'
+	| 'new-page'
+	| 'app'
 
 /** @public */
 export interface TLAppUiEventMap {
@@ -55,6 +57,8 @@ export interface TLAppUiEventMap {
 	'learn-more-button': null
 	'sidebar-toggle': { value: boolean }
 	'click-file-link': null
+	'open-preview-sign-up-modal': null
+	'first-connect-duration': { duration: number }
 }
 
 /** @public */
