@@ -1,15 +1,17 @@
 import { useAuth, useUser as useClerkUser } from '@clerk/clerk-react'
-import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { getAssetUrlsByImport } from '@tldraw/assets/imports.vite'
 import classNames from 'classnames'
+import { Tooltip as _Tooltip } from 'radix-ui'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import {
 	ContainerProvider,
+	DefaultA11yAnnouncer,
 	DefaultDialogs,
 	DefaultToasts,
 	EditorContext,
 	TLUiEventHandler,
+	TldrawUiA11yProvider,
 	TldrawUiContextProvider,
 	fetch,
 	useToasts,
@@ -113,16 +115,19 @@ function InsideOfContainerContext({ children }: { children: ReactNode }) {
 
 	return (
 		<EditorContext.Provider value={currentEditor}>
-			<TldrawUiContextProvider
-				assetUrls={assetUrls}
-				components={components}
-				onUiEvent={handleAppLevelUiEvent}
-			>
-				<TooltipProvider>{children}</TooltipProvider>
-				<DefaultDialogs />
-				<DefaultToasts />
-				<PutToastsInApp />
-			</TldrawUiContextProvider>
+			<TldrawUiA11yProvider>
+				<TldrawUiContextProvider
+					assetUrls={assetUrls}
+					components={components}
+					onUiEvent={handleAppLevelUiEvent}
+				>
+					<_Tooltip.Provider>{children}</_Tooltip.Provider>
+					<DefaultDialogs />
+					<DefaultToasts />
+					<DefaultA11yAnnouncer />
+					<PutToastsInApp />
+				</TldrawUiContextProvider>
+			</TldrawUiA11yProvider>
 		</EditorContext.Provider>
 	)
 }

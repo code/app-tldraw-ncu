@@ -19,6 +19,7 @@ export type TLAppUiEventSource =
 	| 'legacy-import-button'
 	| 'new-page'
 	| 'app'
+	| 'cookie-settings'
 
 /** @public */
 export interface TLAppUiEventMap {
@@ -60,7 +61,6 @@ export interface TLAppUiEventMap {
 	'sidebar-toggle': { value: boolean }
 	'click-file-link': null
 	'open-preview-sign-up-modal': null
-	'first-connect-duration': { duration: number }
 	'create-user': null
 }
 
