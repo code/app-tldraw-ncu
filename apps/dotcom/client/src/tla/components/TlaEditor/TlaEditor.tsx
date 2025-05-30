@@ -17,12 +17,12 @@ import {
 	useEvent,
 } from 'tldraw'
 import { ThemeUpdater } from '../../../components/ThemeUpdater/ThemeUpdater'
+import { useHandleUiEvents } from '../../../utils/analytics'
 import { assetUrls } from '../../../utils/assetUrls'
 import { MULTIPLAYER_SERVER } from '../../../utils/config'
 import { createAssetFromUrl } from '../../../utils/createAssetFromUrl'
 import { globalEditor } from '../../../utils/globalEditor'
 import { multiplayerAssetStore } from '../../../utils/multiplayerAssetStore'
-import { useHandleUiEvents } from '../../../utils/useHandleUiEvent'
 import { useMaybeApp } from '../../hooks/useAppState'
 import { ReadyWrapper, useSetIsReady } from '../../hooks/useIsReady'
 import { useTldrawUser } from '../../hooks/useUser'
@@ -84,7 +84,10 @@ function TlaEditorInner({ fileSlug, deepLinks }: TlaEditorProps) {
 	// i.e. where it appears that they are not present. so the user knows which ones failed.
 	// There's probably a better way of doing this but I couldn't think of one.
 	const hideAllShapes = useAtom('hideAllShapes', false)
-	const isShapeHidden = useCallback(() => hideAllShapes.get(), [hideAllShapes])
+	const getShapeVisibility = useCallback(
+		() => (hideAllShapes.get() ? 'hidden' : 'inherit'),
+		[hideAllShapes]
+	)
 	const remountImageShapes = useCallback(() => {
 		hideAllShapes.set(true)
 		requestAnimationFrame(() => {
@@ -221,7 +224,7 @@ function TlaEditorInner({ fileSlug, deepLinks }: TlaEditorProps) {
 				options={{ actionShortcutsLocation: 'toolbar' }}
 				deepLinks={deepLinks || undefined}
 				overrides={overrides}
-				isShapeHidden={isShapeHidden}
+				getShapeVisibility={getShapeVisibility}
 			>
 				<ThemeUpdater />
 				<SneakyDarkModeSync />
